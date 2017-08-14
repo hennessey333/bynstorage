@@ -252,6 +252,8 @@
 
     <script>
       $(function(){
+
+        console.log('test')
         
         $("#geocomplete").geocomplete()
           .bind("geocode:result", function(event, result){
@@ -263,7 +265,7 @@
           .bind("geocode:multiple", function(event, results){
             $.log("Multiple: " + results.length + " results found");
           });
-        
+
         $("#find").click(function(){
           $("#geocomplete").trigger("geocode");
         });

@@ -61,12 +61,21 @@
                             </span>
                         </div>
                     </li>
-                    <li style="float: right;">
-                        <a href="#" style="display: inline-block;">Sign In</a>
-                    </li>
-                    <li style="float: right;">
-                        <a href="#" style="display: inline-block;">Sign Up</a>
-                    </li>
+
+                    <% if (user) { %>
+                        <li style="float: right;">
+                            <a href="/profile" style="display: inline-block;">Profile</a>
+                        </li>
+                    <% } %>
+
+                    <% if (!user) { %>
+                        <li style="float: right;">
+                            <a href="#" style="display: inline-block;">Sign In</a>
+                        </li>
+                        <li style="float: right;">
+                            <a href="#" style="display: inline-block;">Sign Up</a>
+                        </li>
+                    <% } %>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -197,6 +206,8 @@
 
     <!-- Theme JavaScript -->
     <script src="js/agency.min.js"></script>
+
+    <script type="text/javascript"></script>
 
 </body>
 
