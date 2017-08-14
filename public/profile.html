@@ -37,7 +37,7 @@
 
         <div id="page-top" class="index">
             <!-- Navigation -->
-            <nav id="mainNav" class="navbar navbar-default navbar-custom navbar-fixed-top">
+            <nav id="mainNavProfilePage" class="navbar navbar-default navbar-custom navbar-fixed-top">
                 <div class="container">
                     <!-- Brand and toggle get grouped for better mobile display -->
                     <div class="navbar-header page-scroll">
@@ -70,7 +70,7 @@
                     <div class="panel-body">
                         <div class="media">
                             <div align="center">
-                                <img class="thumbnail img-responsive" src="https://lut.im/7JCpw12uUT/mY0Mb78SvSIcjvkf.png" width="300px" height="300px">
+                                <img class="thumbnail img-responsive" src="img/icons/user.jpg" width="300px" height="300px">
                             </div>
                             <div class="media-body">
                                 <h2 class="panel-title pull-left" style="font-size:30px;">Patrick Hennessey</h2>
@@ -84,6 +84,12 @@
                                 <hr>
                                 <h3><strong>Phone</strong></h3>
                                 <p>(555) 555-5555</p>
+                                <hr><br>
+                                <center>
+                                    <a href="/signout" class="btn btn-xl">
+                                        <span class="service-heading">Sign Out</span>
+                                    </a>
+                                </center>
                             </div>
                         </div>
                     </div>
@@ -92,32 +98,15 @@
 
             <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
             <div class="panel panel-default">
-                <div class="panel-body">
-                    <span>
-                        
-                    </span>
-                    <br><br>
-                    
-                    <br><br><hr>
-                    <span class="pull-left">
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-fw fa-files-o" aria-hidden="true"></i> Posts</a>
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-fw fa-picture-o" aria-hidden="true"></i> Photos <span class="badge">42</span></a>
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-fw fa-users" aria-hidden="true"></i> Contacts <span class="badge">42</span></a>
-                    </span>
-                    <span class="pull-right">
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-lg fa-at" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Mention"></i></a>
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-lg fa-envelope-o" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Message"></i></a>
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-lg fa-ban" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Ignore"></i></a>
-                    </span>
+                <div>
+                    <ul class="nav nav-pills nav-justified profileTabs">
+                        <li role="presentation" class="on backgroundActive"><a href="/managespaces">Manage Spaces</a></li>
+                        <li role="presentation" class="on"><a href="/paymentmethods">My Bookings</a></li>
+                        <li role="presentation" class="on"><a href="/paymentmethods">Messages</a></li>
+                        <li role="presentation" class="on"><a href="/paymentmethods">Payment Methods</a></li>
+                    </ul>
                 </div>
             </div>
-
-            <nav class="nav nav-pills nav-justified">
-              <a class="nav-item nav-link active" href="#">Active</a>
-              <a class="nav-item nav-link" href="#">Link</a>
-              <a class="nav-item nav-link" href="#">Link</a>
-              <a class="nav-item nav-link disabled" href="#">Disabled</a>
-          </nav>
 
             <!-- <footer>
                 <div class="container">
@@ -161,7 +150,6 @@
             <!-- jQuery -->
             <script src="vendor/jquery/jquery.min.js"></script>
 
-
             <!-- Bootstrap Core JavaScript -->
             <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
@@ -170,6 +158,22 @@
 
             <!-- Theme JavaScript -->
             <script src="js/agency.min.js"></script>
+
+            <script type="text/javascript">
+            $(function() {
+                $(".on").click(function() {
+                    $(this).addClass("backgroundActive");
+                });
+            });
+
+            $('ul.profileTabs li').click(
+                function(e) {
+                    e.preventDefault(); // prevent the default action
+                    e.stopPropagation(); // stop the click from bubbling
+                    $(this).closest('ul').find('.on').removeClass('backgroundActive');
+                    $(this).parent().addClass('on');
+            });
+            </script>
         </div>
     </body>
 
