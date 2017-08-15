@@ -64,7 +64,7 @@
         <!-- /.container-fluid -->
     </nav>
 
-        <form role="form" action="/host2" method="get" name="hostForm">
+        <form role="form" action="/host2" method="post" name="hostForm" enctype="multipart/form-data" >
             <div class="container" style="margin-top: 100px; margin-bottom: 80px" id="step1">
                 <div class="row">
                     <div class="col-lg-12 text-center">
@@ -97,13 +97,13 @@
                     <div style="width: 60%; margin: auto;">
                         <h3>What kind of space is it?</h3>
                         <hr class="colorgraph">
-                            <label class="radio-inline"><input type="radio" name="optradio">Garage</label>
-                            <label class="radio-inline"><input type="radio" name="optradio">Closet</label>
-                            <label class="radio-inline"><input type="radio" name="optradio">Basement</label>
-                            <label class="radio-inline"><input type="radio" name="optradio">Bedroom</label>
-                            <label class="radio-inline"><input type="radio" name="optradio">Business</label>
-                            <label class="radio-inline"><input type="radio" name="optradio">Attic</label>
-                            <label class="radio-inline"><input type="radio" name="optradio">Other</label>
+                            <label class="radio-inline"><input type="radio" name="type" value="Garage">Garage</label>
+                            <label class="radio-inline"><input type="radio" name="type" value="Closet">Closet</label>
+                            <label class="radio-inline"><input type="radio" name="type" value="Basement">Basement</label>
+                            <label class="radio-inline"><input type="radio" name="type" value="Bedroom">Bedroom</label>
+                            <label class="radio-inline"><input type="radio" name="type" value="Business">Business</label>
+                            <label class="radio-inline"><input type="radio" name="type" value="Attic">Attic</label>
+                            <label class="radio-inline"><input type="radio" name="type" value="Other">Other</label>
                         <hr class="colorgraph">
                         <div class="row">
                             <div style="width: 60%; margin: auto;"><input value="Next" class="btn btn-default btn-sign-up btn-block btn-lg" id="button2"></div>
@@ -127,11 +127,11 @@
                         <hr class="colorgraph">
                         <div class="form-group">
                             <label for="name">Give Your Byn a Name</label>
-                            <input type="text" class="form-control input-lg" id="name">
+                            <input type="text" class="form-control input-lg" name="name" id="name">
                         </div>
                         <div class="form-group">
                             <label for="decription">Describe Your Byn</label>
-                            <textarea class="form-control" rows="4" id="description"></textarea>
+                            <textarea class="form-control" rows="4" id="description" name="description"></textarea>
                         </div>
                         <hr class="colorgraph">
                         <div class="row">
@@ -155,10 +155,10 @@
                         <h3>What amenities does your Byn have?</h3>
                         <hr class="colorgraph">
                         <p>Check all that apply (Optional)</p>
-                        <label class="checkbox-inline"><input type="checkbox" id="24HourAccess" value="">24-Hour Access</label>
-                        <label class="checkbox-inline"><input type="checkbox" id="climateControlled"value="">Climate Controlled</label>
-                        <label class="checkbox-inline"><input type="checkbox" id="videoSurveillance" value="">Video Surveillance</label>
-                        <label class="checkbox-inline"><input type="checkbox" id="assistedMoveIn" value="">Assisted Move-In</label>
+                        <label class="checkbox-inline"><input type="checkbox" id="24HourAccess" name="amenities" value="24-Hour Access">24-Hour Access</label>
+                        <label class="checkbox-inline"><input type="checkbox" id="climateControlled" name="amenities" value="Climate Controlled">Climate Controlled</label>
+                        <label class="checkbox-inline"><input type="checkbox" id="videoSurveillance" name="amenities" value="Video Surveillance">Video Surveillance</label>
+                        <label class="checkbox-inline"><input type="checkbox" id="assistedMoveIn" name="amenities" value="Assisted Move-In">Assisted Move-In</label>
                         <hr class="colorgraph">
                         <div class="row">
                             <div style="width: 60%; margin: auto;"><input value="Next" class="btn btn-default btn-sign-up btn-block btn-lg" id="button4"></div>
@@ -218,7 +218,7 @@
                         <span id="suggestedPricePerSqFt" type="text"> </span> per square foot per month
                         <br><br>
                         <h4>Set Your Byn's Monthly Rate Per Square Foot</h4>
-                        $ <input class="form-control priceCalc" type="number" min="0"/>
+                        $ <input class="form-control priceCalc" name="price" type="number" min="0"/>
                         <br><br>
                         Your custom price was calculated based on your Byn size and ammenities.
                         <br>
@@ -250,7 +250,7 @@
                         <label class="control-label">Choose File(s)</label>
                         <br>
                         <label class="btn btn-default btn-lg">
-                            Browse <input type="file" id="files" class="hidden" multiple>
+                            Browse <input type="file" id="files" class="hidden" name="photos" accept="image/*" multiple>
                         </label>
                         <output id="photoList"></output>
                         <br>
@@ -324,13 +324,13 @@
                         <label class="control-label">Choose Profile Photo</label>
                         <br>
                         <label class="btn btn-default btn-lg">
-                            Browse <input type="file" id="files2" class="hidden" multiple>
+                            Browse <input type="file" id="files2" class="hidden" name="hostname" multiple>
                         </label>
                         <output id="photoList2"></output>
                         <br><br>
                         <div class="form-group">
                             <label for="decription">Host Bio</label><br>
-                            <textarea class="form-control" rows="4" id="description"></textarea>
+                            <textarea class="form-control" rows="4" id="description" name="hostdesc"></textarea>
                         </div>
                         <hr class="colorgraph">
                         <div class="row">
@@ -398,7 +398,7 @@
         $("#step6").hide();
         $("#step7").hide();
         $("#step8").hide();
-        // $("#step9").hide();
+        $("#step9").hide();
         $("#dateRangeFull").hide();
         $("#dateRangeStart").hide();
         window.onbeforeunload = function() {

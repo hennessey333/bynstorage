@@ -5,13 +5,42 @@
 var express = require('express');
 var router = express.Router();
 var validator = require('express-validator');
+// var bodyParser = require('body-parser');
+var fs = require('fs');
 var path = require('path');
 //var Project = require('../model/project');
 var strftime = require('strftime');
+var algoliasearch = require('algoliasearch');
+
+var client = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
+var index = client.initIndex('byns');
+var Byn = require('./models/Byn')
+
+index.setSettings({
+  searchableAttributes: [
+    'name',
+    'location',
+    'price',
+    'size',
+    'price',
+    'description',
+    'amenities',
+    'start',
+    'end'
+  ],
+  //customRanking: ['desc(popularity)'],
+});
 
 // GET home page
 
 module.exports = function(app, passport) {
+
+  var multer = require('multer');
+  var upload = multer({ dest: './uploads'}); //,
+  //  rename: function (fieldname, filename) {
+  //    return filename;
+  //  },
+  // });
 
   app.get('/', function(req, res) {
     //res.sendFile(path.join(__dirname, 'public/index.ejs'))s
@@ -65,6 +94,57 @@ module.exports = function(app, passport) {
   app.get('/host', isLoggedIn, function(req, res) {
     res.render('host1', {
         user : req.user // get the user out of session and pass to template
+    });
+  });
+
+  app.post('/host2', upload.array('photos'), function(req, res) {
+    console.log("req.body", req.body);
+    if (req.body.endAvailabilityRadio === 'Yes') {
+      var range = req.body.when.split(' ');
+      var start = range[0];
+      var end = range[2];
+    }
+    else {
+      var start = req.body.dateStart;
+      var end = null;
+    }
+    console.log("req.files", req.files) //, req.file.photos, req.files.photos.path, req.files.photos.name)
+    new Byn({
+      location: req.body.location,
+      type: req.body.type,
+      name: req.body.name,
+      description: req.body.description,
+      amenities: req.body.amenities,
+      size: req.body.sqFeet,
+      price: req.body.price,
+      start: start,
+      end: end,
+      photos: req.files,
+      //{data: fs.readFileSync(req.files.photos.path + req.files.photos.name), contentType: req.files.photos.type},
+      host: req.user
+    }).save(function(err, byn) {
+      if (err) {
+        console.log("Error", err);
+      }
+      else {
+        index.addObject({
+          location: req.body.location,
+          type: req.body.type,
+          name: req.body.name,
+          description: req.body.description,
+          amenities: req.body.amenities,
+          size: req.body.sqFeet,
+          price: req.body.price,
+          start: start,
+          end: end,
+          photos: req.files,
+          host: req.user
+        }, byn._id, function(err, content) {
+          //console.log('objectID=' + content.objectID);
+          if (err) console.log("Error", err);
+          else res.redirect('/profile');
+        });
+      }
     });
   });
 
