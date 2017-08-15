@@ -251,6 +251,7 @@
                         <br>
                         <label class="btn btn-default btn-lg">
                             Browse <input type="file" id="files" class="hidden" name="photos" accept="image/*" multiple>
+                            <
                         </label>
                         <output id="photoList"></output>
                         <br>
@@ -551,6 +552,20 @@
             })(f);
             // Read in the image file as a data URL.
             reader.readAsDataURL(f);
+            // const xhr = new XMLHttpRequest();
+            // xhr.open('GET', `/sign-s3?file-name=${f.name}&file-type=${f.type}`);
+            // xhr.onreadystatechange = () => {
+            //     if(xhr.readyState === 4){
+            //         if(xhr.status === 200){
+            //             const response = JSON.parse(xhr.responseText);
+            //             uploadFile(f, response.signedRequest, response.url);
+            //         }
+            //         else{
+            //             alert('Could not get signed URL.');
+            //         }
+            //     }
+            //   };
+            //   xhr.send();
         }
     }
     document.getElementById('files').addEventListener('change', handleFileSelect, false);
@@ -581,6 +596,19 @@
             reader.readAsDataURL(f);
         }
     }
+    // function uploadFile(file, signedRequest, url){
+    //   const xhr = new XMLHttpRequest();
+    //   xhr.open('PUT', signedRequest);
+    //   xhr.onreadystatechange = () => {
+    //     if(xhr.readyState === 4){
+    //         document.getElementById('pic-url').value = url;
+    //       if(xhr.status !== 200){
+    //         alert('Could not upload file.');
+    //       }
+    //     }
+    //   };
+    //   xhr.send(file);
+    // }
     document.getElementById('files2').addEventListener('change', handleFileSelect, false);
     </script>
 
