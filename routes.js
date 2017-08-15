@@ -49,32 +49,57 @@ module.exports = function(app, passport) {
 
   // GET about us page
   app.get('/aboutus', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/aboutus.html'))
+      res.render('aboutus', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET how to rent page
   app.get('/howtorent', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/howtorent.html'))
+    res.render('howtorent', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET how to host page
   app.get('/howtohost', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/howtohost.html'))
+    res.render('howtohost', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
+    // res.sendFile(path.join(__dirname, 'public/howtohost.html'))
   });
 
   // GET FAQ page
   app.get('/faq', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/faq.html'))
+    res.render('faq', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET Terms of Use page
   app.get('/termsofuse', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/termsofuse.html'))
+    res.render('termsofuse', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET Privacy Policy page
   app.get('/privacypolicy', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/privacypolicy.html'))
+    res.render('privacypolicy', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET Privacy Policy page
@@ -169,9 +194,9 @@ module.exports = function(app, passport) {
   // we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
   app.get('/home', isLoggedIn, function(req, res) {
-      res.render('home', {
-          user : req.user // get the user out of session and pass to template
-      });
+    res.render('home', {
+        user : req.user // get the user out of session and pass to template
+    });
   });
 
   // =====================================
@@ -190,11 +215,14 @@ module.exports = function(app, passport) {
 
   // process the login form
   app.post('/signin', passport.authenticate('local-signin', {
-      successRedirect : '/home', // redirect to the secure profile section
+      // successRedirect : '/home', // redirect to the secure profile section
       failureRedirect : '/', // redirect back to the signup page if there is an error
       failureFlash : true // allow flash messages
-  }));
-
+  }), function(req, res) {
+    req.session.save(function(err) {
+      res.redirect('/home')
+    })
+  });
 }
 
 
@@ -206,6 +234,5 @@ function isLoggedIn(req, res, next) {
     }
 
     // if they aren't redirect them to the home page
-    console.log("3")
     res.redirect('/');
 }

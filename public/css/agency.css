@@ -11,6 +11,10 @@
   border-bottom-right-radius: 6px !important;
 }
 
+.backgroundActive {
+  background-color: #EEEEEE;
+}
+
 .radio-inline {
   margin: 0 15px 0 15px
 }
