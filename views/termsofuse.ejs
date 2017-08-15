@@ -61,12 +61,21 @@
                             </span>
                         </div>
                     </li>
-                    <li style="float: right;">
-                        <a href="#" style="display: inline-block;">Sign In</a>
-                    </li>
-                    <li style="float: right;">
-                        <a href="#" style="display: inline-block;">Sign Up</a>
-                    </li>
+                    
+                    <% if (user) { %>
+                        <li style="float: right;">
+                            <a href="/profile" style="display: inline-block;">Profile</a>
+                        </li>
+                    <% } %>
+
+                    <% if (!user) { %>
+                        <li style="float: right;">
+                            <a href="#" style="display: inline-block;" data-toggle="modal" data-target="#targetsignin">Sign In</a>
+                        </li>
+                        <li style="float: right;">
+                            <a href="#" style="display: inline-block;" data-toggle="modal" data-target="#targetsignup">Sign Up</a>
+                        </li>
+                    <% } %>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -75,62 +84,22 @@
     </nav>
 
     <!-- Header -->
-    <header class="headerAboutUs" style="height: 550px">
+    <header class="headerFaq" style="height: 550px">
         <div class="container">
             <div class="intro-text">
-                <div class="intro-heading">About Us</div>
-                <div class="intro-lead-in" style="margin-right: 10%; margin-left: 10%">Byn is a community marketplace for people to list, discover, and rent new storage spaces</div>
+                <div class="intro-heading">Terms of Use</div>
+                <!-- <div class="intro-lead-in" style="margin-right: 10%; margin-left: 10%"></div> -->
             </div>
         </div>
     </header>
 
-    <!-- Team Section -->
+    <!-- Hosting FAQ Section -->
     <section id="team">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Our Team</h2>
-                    <h3 class="section-subheading text-muted">Meet the amazing people behind Byn</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="team-member">
-                        <img src="img/team/1.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Patrick Hennessey</h4>
-                        <p class="text-muted">Co-founder & CEO</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/phennessey19/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="team-member">
-                        <img src="img/team/2.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Sophia Torrance</h4>
-                        <p class="text-muted">Co-founder & CTO</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/sophia-torrance-008397133/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="team-member">
-                        <img src="img/team/3.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Asif Bhatti</h4>
-                        <p class="text-muted">Co-founder & Head of Design</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/mabhatti/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 text-center">
-                    <p class="large text-muted">Byn is a new type of storage company.<br><br>Our platform establishes a community marketplace for people to discover new places to store their belongings.  We want to revolutionize the storage industry.  There is extra space everywhere, Byn gives users the ability to find those spaces and conveniently store their stuff for much cheaper than conventional storage companies.  Byn hopes to create new income streams for anyone with extra space, and open up storage to the world!</p>
+                    <h2 class="section-heading">Coming Soon</h2>
+                    <h3 class="section-subheading text-muted"> . . . </h3>
                 </div>
             </div>
         </div>
@@ -186,11 +155,11 @@
             <div class="row">
                 <div class="col-md-5">
                     <ul class="list-inline quicklinks">
-                        <li><a href="#" style="margin-right: 10px">FAQ</a>
+                        <li><a href="/faq" style="margin-right: 10px">FAQ</a>
                         </li>
-                        <li><a href="#" style="margin-right: 10px">How To Rent</a>
+                        <li><a href="/howtorent" style="margin-right: 10px">How To Rent</a>
                         </li>
-                        <li><a href="#" style="margin-right: 10px">How To Host</a>
+                        <li><a href="/howtohost" style="margin-right: 10px">How To Host</a>
                         </li>
                     </ul>
                 </div>
@@ -204,9 +173,9 @@
                 </div>
                 <div class="col-md-5">
                     <ul class="list-inline quicklinks">
-                        <li><a href="#" style="margin-right: 10px">About Us</a>
+                        <li><a href="/aboutus" style="margin-right: 10px">About Us</a>
                         </li>
-                        <li><a href="#" style="margin-right: 10px">Privacy Policy</a>
+                        <li><a href="/privacypolicy" style="margin-right: 10px">Privacy Policy</a>
                         </li>
                         <li><a href="#" style="margin-right: 10px">Terms of Use</a>
                         </li>
@@ -219,6 +188,120 @@
             </div>
         </div>
     </footer>
+
+    <!-- Sign Up Modal -->
+    <div class="modal fade" id="targetsignup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <!-- <h4 class="modal-title" id="myModalLabel">Sign Up</h4> -->
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div style="margin-left: 3%; margin-right: 3%">
+                            <form role="form" action="/signup" method="post">
+                                <center>
+                                    <h2>Sign Up <br> <small>It's free and always will be</small></h2>
+                                </center>
+
+                                <% if (signupMessage.length > 0) { %>
+                                <div class="alert alert-danger"><%= signupMessage %></div>
+                                <% } %>
+
+                                <hr class="colorgraph">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="firstname" id="firstname" class="form-control input-lg" placeholder="First Name" tabindex="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="lastname" id="lastname" class="form-control input-lg" placeholder="Last Name" tabindex="2">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" name="email" id="email" class="form-control input-lg" placeholder="Email Address" tabindex="3">
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password" tabindex="4">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" placeholder="Confirm Password" tabindex="5">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="colorgraph">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12"><input type="submit" value="Sign Up" class="btn btn-default btn-sign-up btn-block btn-lg" tabindex="7"></div>
+                                    <!-- <div class="col-xs-12 col-md-6"><a href="#" class="btn btn-success btn-block btn-lg">Sign In</a></div> -->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Sign In Modal -->
+    <div class="modal fade" id="targetsignin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <!-- <h4 class="modal-title" id="myModalLabel">Sign Up</h4> -->
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div style="margin-left: 3%; margin-right: 3%">
+                            <form role="form" action="/signin" method="post">
+                                <center>
+                                    <h2>Sign In <br> <small>Welcome back</small></h2>
+                                </center>
+
+                                <% if (signinMessage.length > 0) { %>
+                                <div class="alert alert-danger"><%= signinMessage %></div>
+                                <% } %>
+
+                                <hr class="colorgraph">
+                                <div class="form-group">
+                                    <input type="text" name="email" id="display_name" class="form-control input-lg" placeholder="Email" tabindex="1">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password" tabindex="2">
+                                </div>
+                                <hr class="colorgraph">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12"><input type="submit" value="Sign In" class="btn btn-default btn-sign-up btn-block btn-lg" tabindex="7"></div>
+                                    <!-- <div class="col-xs-12 col-md-6"><a href="#" class="btn btn-success btn-block btn-lg">Sign In</a></div> -->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+     <% if (signupMessage.length > 0) { %>
+        <script>
+            $('#targetsignup').modal('show'); 
+        </script>
+    <% } %>
+
+    <% if (signinMessage.length > 0) { %>
+        <script>
+            $('#targetsignin').modal('show'); 
+        </script>
+    <% } %>
 
     <!-- jQuery -->
     <script src="vendor/jquery/jquery.min.js"></script>

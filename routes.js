@@ -20,35 +20,57 @@ module.exports = function(app, passport) {
 
   // GET about us page
   app.get('/aboutus', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/aboutus.html'))
+      res.render('aboutus', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET how to rent page
   app.get('/howtorent', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/howtorent.html'))
+    res.render('howtorent', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET how to host page
   app.get('/howtohost', function(req, res) {
     res.render('howtohost', {
-        user : req.user // get the user out of session and pass to template
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
     });
     // res.sendFile(path.join(__dirname, 'public/howtohost.html'))
   });
 
   // GET FAQ page
   app.get('/faq', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/faq.html'))
+    res.render('faq', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET Terms of Use page
   app.get('/termsofuse', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/termsofuse.html'))
+    res.render('termsofuse', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET Privacy Policy page
   app.get('/privacypolicy', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/privacypolicy.html'))
+    res.render('privacypolicy', {
+        user : req.user,
+        signinMessage: req.flash('signinMessage'),
+        signupMessage: req.flash('signupMessage')
+    });
   });
 
   // GET Privacy Policy page
