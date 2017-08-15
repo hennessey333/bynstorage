@@ -15,6 +15,30 @@ var algoliasearch = require('algoliasearch');
 var client = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
 var index = client.initIndex('byns');
 var Byn = require('./models/Byn')
+var aws = require('aws-sdk');
+var multer = require('multer');
+var multerS3 = require('multer-s3');
+var S3_BUCKET = process.env.AWS_BUCKET;
+
+var s3 = new aws.S3();
+  var upload = multer({
+    storage: multerS3({
+    s3: s3,
+    bucket: S3_BUCKET,
+    acl: 'public-read',
+    metadata: function(req, file, cb) {
+      console.log(file);
+      cb(null, file);
+    }
+  })
+  });
+// aws.config = new aws.Config();
+//      aws.config.accessKeyId = process.env.AWS_ID;
+//      aws.config.secretAccessKey = process.env.AWS_SECRET_KEY;
+//      aws.config.region = "us-west-1";
+//      aws.config.apiVersions = {
+//         "s3": "2006-03-01"
+//      }
 
 index.setSettings({
   searchableAttributes: [
@@ -35,8 +59,7 @@ index.setSettings({
 
 module.exports = function(app, passport) {
 
-  var multer = require('multer');
-  var upload = multer({ dest: './uploads'}); //,
+  //,
   //  rename: function (fieldname, filename) {
   //    return filename;
   //  },
@@ -122,8 +145,57 @@ module.exports = function(app, passport) {
     });
   });
 
+
+  // app.get('/sign-s3', (req, res) => {
+  //   const s3 = new aws.S3();
+  //   const fileName = req.query['file-name'];
+  //   const fileType = req.query['file-type'];
+  //   const s3Params = {
+  //     Bucket: S3_BUCKET,
+  //     Key: fileName,
+  //     //Expires: 60,
+  //     ContentType: fileType,
+  //     ACL: 'public-read'
+  //   };
+  //   s3.getSignedUrl('putObject', s3Params, (err, data) => {
+  //     if(err){
+  //       console.log(err);
+  //       return res.end();
+  //     }
+  //     const returnData = {
+  //       signedRequest: data,
+  //       url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+  //     };
+  //     res.write(JSON.stringify(returnData));
+  //     res.end();
+  //   });
+    // s3.putObject(s3Params, function(err, data){
+    //   if (err) 
+    //     { console.log('Error uploading data: ', data); 
+    //       res.end();
+    //     } else {
+    //       console.log('succesfully uploaded the image!', data);
+    //       res.end();
+    //     }
+    // });
+ // });
+  //   s3.getSignedUrl('putObject', s3Params, (err, data) => {
+  //     console.log("DATA", data)
+  //     if(err){
+  //       console.log(err);
+  //       return res.end();
+  //     }
+  //     const returnData = {
+  //       signedRequest: data,
+  //       url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+  //     };
+  //     res.write(JSON.stringify(returnData));
+  //     res.end();
+  //   });
+  // });
+
   app.post('/host2', upload.array('photos'), function(req, res) {
-    console.log("req.body", req.body);
+    console.log("req.body, files", req.body, req.files);
     if (req.body.endAvailabilityRadio === 'Yes') {
       var range = req.body.when.split(' ');
       var start = range[0];
@@ -133,44 +205,49 @@ module.exports = function(app, passport) {
       var start = req.body.dateStart;
       var end = null;
     }
-    console.log("req.files", req.files) //, req.file.photos, req.files.photos.path, req.files.photos.name)
-    new Byn({
-      location: req.body.location,
-      type: req.body.type,
-      name: req.body.name,
-      description: req.body.description,
-      amenities: req.body.amenities,
-      size: req.body.sqFeet,
-      price: req.body.price,
-      start: start,
-      end: end,
-      photos: req.files,
-      //{data: fs.readFileSync(req.files.photos.path + req.files.photos.name), contentType: req.files.photos.type},
-      host: req.user
-    }).save(function(err, byn) {
-      if (err) {
-        console.log("Error", err);
-      }
-      else {
-        index.addObject({
-          location: req.body.location,
-          type: req.body.type,
-          name: req.body.name,
-          description: req.body.description,
-          amenities: req.body.amenities,
-          size: req.body.sqFeet,
-          price: req.body.price,
-          start: start,
-          end: end,
-          photos: req.files,
-          host: req.user
-        }, byn._id, function(err, content) {
-          //console.log('objectID=' + content.objectID);
-          if (err) console.log("Error", err);
-          else res.redirect('/profile');
-        });
-      }
-    });
+    var photos = req.files.map(item => ({url: item.metadata.location}));
+    //console.log("req.files", req.files);
+    // var urlParams = {Bucket: S3_BUCKET, Key: req.files.filename};
+    // s3.getSignedUrl('getObject', urlParams, function(err, url){
+    //   console.log('the url of the image is', url);
+      new Byn({
+        location: req.body.location,
+        type: req.body.type,
+        name: req.body.name,
+        description: req.body.description,
+        amenities: req.body.amenities,
+        size: req.body.sqFeet,
+        price: req.body.price,
+        start: start,
+        end: end,
+        photos: photos,
+        //{data: fs.readFileSync(req.files.photos.path + req.files.photos.name), contentType: req.files.photos.type},
+        host: req.user
+      }).save(function(err, byn) {
+        if (err) {
+          console.log("Error", err);
+        }
+        else {
+          index.addObject({
+            location: req.body.location,
+            type: req.body.type,
+            name: req.body.name,
+            description: req.body.description,
+            amenities: req.body.amenities,
+            size: req.body.sqFeet,
+            price: req.body.price,
+            start: start,
+            end: end,
+            photos: photos,
+            host: req.user,
+          }, byn._id, function(err, content) {
+            //console.log('objectID=' + content.objectID);
+            if (err) console.log("Error", err);
+            else res.redirect('/profile');
+          });
+        }
+      });
+    //})
   });
 
   // // POST home page to search page
@@ -223,6 +300,7 @@ module.exports = function(app, passport) {
       res.redirect('/home')
     })
   });
+
 }
 
 
