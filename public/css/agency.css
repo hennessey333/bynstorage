@@ -11,6 +11,10 @@
   border-bottom-right-radius: 6px !important;
 }
 
+.carousel {
+  max-height: 200px !important; 
+}
+
 .backgroundActive {
   background-color: #EEEEEE;
 }
