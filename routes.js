@@ -32,13 +32,6 @@ var s3 = new aws.S3();
     }
   })
   });
-// aws.config = new aws.Config();
-//      aws.config.accessKeyId = process.env.AWS_ID;
-//      aws.config.secretAccessKey = process.env.AWS_SECRET_KEY;
-//      aws.config.region = "us-west-1";
-//      aws.config.apiVersions = {
-//         "s3": "2006-03-01"
-//      }
 
 index.setSettings({
   searchableAttributes: [
@@ -59,15 +52,14 @@ index.setSettings({
 
 module.exports = function(app, passport) {
 
-  //,
-  //  rename: function (fieldname, filename) {
-  //    return filename;
-  //  },
-  // });
-
   app.get('/', function(req, res) {
     //res.sendFile(path.join(__dirname, 'public/index.ejs'))s
-    res.render('index.ejs', { signinMessage: req.flash('signinMessage'), signupMessage: req.flash('signupMessage') })
+    if (req.user) {
+      res.render('home', {
+        user : req.user // get the user out of session and pass to template
+      });
+    }
+    else res.render('index.ejs', { signinMessage: req.flash('signinMessage'), signupMessage: req.flash('signupMessage') })
   });
 
   // GET about us page
@@ -145,57 +137,8 @@ module.exports = function(app, passport) {
     });
   });
 
-
-  // app.get('/sign-s3', (req, res) => {
-  //   const s3 = new aws.S3();
-  //   const fileName = req.query['file-name'];
-  //   const fileType = req.query['file-type'];
-  //   const s3Params = {
-  //     Bucket: S3_BUCKET,
-  //     Key: fileName,
-  //     //Expires: 60,
-  //     ContentType: fileType,
-  //     ACL: 'public-read'
-  //   };
-  //   s3.getSignedUrl('putObject', s3Params, (err, data) => {
-  //     if(err){
-  //       console.log(err);
-  //       return res.end();
-  //     }
-  //     const returnData = {
-  //       signedRequest: data,
-  //       url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
-  //     };
-  //     res.write(JSON.stringify(returnData));
-  //     res.end();
-  //   });
-    // s3.putObject(s3Params, function(err, data){
-    //   if (err) 
-    //     { console.log('Error uploading data: ', data); 
-    //       res.end();
-    //     } else {
-    //       console.log('succesfully uploaded the image!', data);
-    //       res.end();
-    //     }
-    // });
- // });
-  //   s3.getSignedUrl('putObject', s3Params, (err, data) => {
-  //     console.log("DATA", data)
-  //     if(err){
-  //       console.log(err);
-  //       return res.end();
-  //     }
-  //     const returnData = {
-  //       signedRequest: data,
-  //       url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
-  //     };
-  //     res.write(JSON.stringify(returnData));
-  //     res.end();
-  //   });
-  // });
-
   app.post('/host2', upload.array('photos'), function(req, res) {
-    console.log("req.body, files", req.body, req.files);
+    console.log("req.files", req.files);
     if (req.body.endAvailabilityRadio === 'Yes') {
       var range = req.body.when.split(' ');
       var start = range[0];
@@ -205,11 +148,11 @@ module.exports = function(app, passport) {
       var start = req.body.dateStart;
       var end = null;
     }
-    var photos = req.files.map(item => ({url: item.metadata.location}));
-    //console.log("req.files", req.files);
-    // var urlParams = {Bucket: S3_BUCKET, Key: req.files.filename};
-    // s3.getSignedUrl('getObject', urlParams, function(err, url){
-    //   console.log('the url of the image is', url);
+    var photos = req.files.map(item => (item.location));
+    console.log("req.files", req.files);
+    var urlParams = {Bucket: S3_BUCKET, Key: req.files.filename};
+    s3.getSignedUrl('getObject', urlParams, function(err, url){
+      console.log('the url of the image is', url);
       new Byn({
         location: req.body.location,
         type: req.body.type,
@@ -221,7 +164,6 @@ module.exports = function(app, passport) {
         start: start,
         end: end,
         photos: photos,
-        //{data: fs.readFileSync(req.files.photos.path + req.files.photos.name), contentType: req.files.photos.type},
         host: req.user
       }).save(function(err, byn) {
         if (err) {
@@ -241,13 +183,12 @@ module.exports = function(app, passport) {
             photos: photos,
             host: req.user,
           }, byn._id, function(err, content) {
-            //console.log('objectID=' + content.objectID);
             if (err) console.log("Error", err);
             else res.redirect('/profile');
           });
-        }
+       }
       });
-    //})
+    })
   });
 
   // // POST home page to search page
@@ -308,9 +249,9 @@ module.exports = function(app, passport) {
 function isLoggedIn(req, res, next) {
     // if user is authenticated in the session, carry on 
     if (req.isAuthenticated()){
-        return next();
+        next();
     }
 
     // if they aren't redirect them to the home page
-    res.redirect('/');
+    else res.redirect('/');
 }

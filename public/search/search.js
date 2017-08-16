@@ -2,8 +2,8 @@
 /* global instantsearch */
 
 var search = instantsearch({
-  appId: process.env.ALGOLIA_APP_ID,
-  apiKey: process.env.ALGOLIA_SEARCH_KEY,
+  appId: 'JZD3EA97SB',
+  apiKey: 'e8bf94e0fd17d490c4ff903737db98a5',
   indexName: 'byns',
   urlSync: true
 });
@@ -15,6 +15,18 @@ var search = instantsearch({
 // });
 
 search.addWidget(
+  instantsearch.widgets.searchBox({
+    container: '#geocomplete'
+  })
+);
+
+search.addWidget(
+  instantsearch.widgets.searchBox({
+    container: '#daterange'
+  })
+);
+
+search.addWidget(
   instantsearch.widgets.stats({
     container: '#stats'
   })
@@ -23,7 +35,7 @@ search.addWidget(
 var hitTemplate =
   '<div class="hit col-sm-3">' +
   '<div class="pictures-wrapper">' +
-    '<img class="picture" src="{photos}" />' +
+    '<img class="picture" src="{{photos}}" />' +
     /*'<img class="profile" src="{{user.user.thumbnail_url}}" />' +*/
   '</div>' +
   '<div class="infos">' +
