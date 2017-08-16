@@ -7,6 +7,10 @@ var bynSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    _geoloc: {
+        type: Object,
+        required: true
+    },
     type: {
         type: String,
         required: true,

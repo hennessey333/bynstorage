@@ -77,6 +77,10 @@
                         <hr class="colorgraph">
                         <div class="form-group">
                             <input id="geocomplete" type="text" class="form-control input-lg" name="location" placeholder="Byn Location">
+                            <div id="geoloc">
+                                <input id="lat" type="hidden" name="lat" value="" />
+                                <input id="lng" type="hidden" name="lng" value="" />
+                            </div>
                         </div>
                         <hr class="colorgraph">
                         <div class="row">
@@ -667,6 +671,8 @@
         
         $("#geocomplete").geocomplete()
           .bind("geocode:result", function(event, result){
+            $('#lat').val(result.geometry.location.lat());
+            $('#lng').val(result.geometry.location.lng());
             $.log("Result: " + result.formatted_address);
           })
           .bind("geocode:error", function(event, status){

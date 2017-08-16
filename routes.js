@@ -123,11 +123,13 @@ module.exports = function(app, passport) {
   });
 
   // GET search page
-  app.get('/search', function(req, res) {
+  app.post('/search', function(req, res) {
     // req.checkBody('where', 'A location is required.').notEmpty();
     // req.checkBody('when', 'A date range is required.').notEmpty();
     // var errors = req.validationErrors();
     // console.log(errors);
+    var where = req.body.where;
+    var when = req.body.when;
     res.sendFile(path.join(__dirname, 'public/search/index.html'))
   });
 
@@ -149,12 +151,14 @@ module.exports = function(app, passport) {
       var end = null;
     }
     var photos = req.files.map(item => (item.location));
-    console.log("req.files", req.files);
+    console.log("req.body req.files", req.body, req.files);
     var urlParams = {Bucket: S3_BUCKET, Key: req.files.filename};
-    s3.getSignedUrl('getObject', urlParams, function(err, url){
-      console.log('the url of the image is', url);
-      new Byn({
+    new Byn({
         location: req.body.location,
+        _geoloc: {
+              lat: parseFloat(req.body.lat),
+              lng: parseFloat(req.body.lng)
+            },
         type: req.body.type,
         name: req.body.name,
         description: req.body.description,
@@ -172,6 +176,10 @@ module.exports = function(app, passport) {
         else {
           index.addObject({
             location: req.body.location,
+            _geoloc: {
+              lat: parseFloat(req.body.lat),
+              lng: parseFloat(req.body.lng)
+            },
             type: req.body.type,
             name: req.body.name,
             description: req.body.description,
@@ -188,7 +196,6 @@ module.exports = function(app, passport) {
           });
        }
       });
-    })
   });
 
   // // POST home page to search page
