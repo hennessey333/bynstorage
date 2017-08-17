@@ -9,7 +9,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Agency - Start Bootstrap Theme</title>
+    <title>Byn Storage</title>
+
+    <link rel="icon" href="img/companyLogos/BynLogo2.png">
 
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -70,20 +72,20 @@
                     <div class="panel-body">
                         <div class="media">
                             <div align="center">
-                                <img class="thumbnail img-responsive" src="img/icons/user.jpg" width="300px" height="300px">
+                                <img class="thumbnail img-responsive" src="img/team/1.jpg" width="300px" height="300px">
                             </div>
                             <div class="media-body">
                                 <h2 class="panel-title pull-left" style="font-size:30px;">Patrick Hennessey</h2>
                                 <br><br><br>
                                 <hr>
                                 <h3><strong>Bio</strong></h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel gravida metus, non ultrices sapien. Morbi odio metus, dapibus non nibh id amet.</p>
+                                <p>Hi!  I'm a student at Claremont McKenna College, a small liberal arts school outside of Los Angeles.  I'm originally from Boston, MA.  I love listening to music, exploring new cities, and hanging out with friends.</p>
                                 <hr>
                                 <h3><strong>Email</strong></h3>
                                 <p>email@email.com</p>
                                 <hr>
                                 <h3><strong>Phone</strong></h3>
-                                <p>(555) 555-5555</p>
+                                <p>(617) 610-5255</p>
                                 <hr><br>
                                 <center>
                                     <a href="/signout" class="btn btn-xl">
@@ -100,11 +102,144 @@
             <div class="panel panel-default">
                 <div>
                     <ul class="nav nav-pills nav-justified profileTabs">
-                        <li role="presentation" class="on backgroundActive"><a href="/managespaces">Manage Spaces</a></li>
-                        <li role="presentation" class="on"><a href="/paymentmethods">My Bookings</a></li>
-                        <li role="presentation" class="on"><a href="/paymentmethods">Messages</a></li>
-                        <li role="presentation" class="on"><a href="/paymentmethods">Payment Methods</a></li>
+                        <li role="presentation" class="on backgroundActive"><a href="#">Manage Spaces</a></li>
+                        <li role="presentation" class="on"><a href="/bookings">My Bookings</a></li>
+                        <li role="presentation" class="on"><a href="/messages">Messages</a></li>
+                        <li role="presentation" class="on"><a href="/payment">Payment Methods</a></li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- Hard coded example for demo -->
+            <div class="col-xs-12">
+                <div class="row col-xs-6" style="border: medium #EEEEEE solid; border-radius: 7px; margin-right: 45px;">
+                    <div style="margin-left: 3%; margin-right: 3%">
+                        <div>
+                            <center>
+                                <h3>Extra Space At Horizons<small><br>San Francisco, CA</small></h3>
+                            </center>
+                            <hr class="colorgraph">
+                            
+                            <div id="bynImgCarousel" class="carousel slide" data-ride="carousel">
+                              <!-- Indicators -->
+                              <ol class="carousel-indicators" style="bottom: 0 !important;">
+                                <li data-target="#bynImgCarousel" data-slide-to="0" class="active"></li>
+                                <li data-target="#bynImgCarousel" data-slide-to="1"></li>
+                                <li data-target="#bynImgCarousel" data-slide-to="2"></li>
+                              </ol>
+
+                              <!-- Wrapper for slides -->
+                              <center>
+                                <div class="carousel-inner">
+                                  <div class="item active">
+                                    <img class="carousel" src="../img/header-bg2.jpg" alt="...">
+                                  </div>
+                                  <div class="item">
+                                    <img class="carousel" src="../img/about/2.jpg" alt="...">
+                                  </div>
+                                  <div class="item">
+                                    <img class="carousel" src="../img/about/3.jpg" alt="...">
+                                  </div>
+                                </div>
+                              </center>
+
+                              <!-- Controls -->
+                              <a class="left carousel-control" href="#bynImgCarousel" role="button" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                              </a>
+                              <a class="right carousel-control" href="#bynImgCarousel" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                              </a>
+                            </div> <!-- Carousel -->
+                            <div style="max-height: 80px; overflow: scroll;">
+                              <center>
+                                <h6>We have 50K square feet of office space, plenty to open up to the community. Horizons is an extremely safe environment of college students studying CS. There is lots of space where we can keep your belongings and ensure they are stored safely.</h6>
+                              <center>
+                            </div>
+                            <hr class="colorgraph">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <center>
+                                        <div>
+                                            <a class="btn btn-default btn-sign-up btn-block btn-lg" style="margin-bottom: 15px;">Edit</a>
+                                        </div>
+                                    </center>
+                                </div>
+                                <div class="col-xs-6">
+                                    <center>
+                                        <div>
+                                            <a class="btn btn-default btn-sign-up btn-block btn-lg" style="margin-bottom: 15px;">Delete</a>
+                                        </div>
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row col-xs-6" style="border: medium #EEEEEE solid; border-radius: 7px;">
+                    <div style="margin-left: 3%; margin-right: 3%">
+                        <div>
+                            <center>
+                                <h3>Garage on Market Street<small><br>San Francisco, CA</small></h3>
+                            </center>
+                            <hr class="colorgraph">
+                            
+                            <div id="bynImgCarousel" class="carousel slide" data-ride="carousel">
+                              <!-- Indicators -->
+                              <ol class="carousel-indicators" style="bottom: 0 !important;">
+                                <li data-target="#bynImgCarousel" data-slide-to="0" class="active"></li>
+                                <li data-target="#bynImgCarousel" data-slide-to="1"></li>
+                                <li data-target="#bynImgCarousel" data-slide-to="2"></li>
+                              </ol>
+
+                              <!-- Wrapper for slides -->
+                              <center>
+                                <div class="carousel-inner">
+                                  <div class="item active">
+                                    <img class="carousel" src="../img/examples/1.jpg" alt="...">
+                                  </div>
+                                  <div class="item">
+                                    <img class="carousel" src="../img/examples/2.jpg" alt="...">
+                                  </div>
+                                  <div class="item">
+                                    <img class="carousel" src="../img/examples/3.jpg" alt="...">
+                                  </div>
+                                </div>
+                              </center>
+
+                              <!-- Controls -->
+                              <a class="left carousel-control" href="#bynImgCarousel" role="button" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                              </a>
+                              <a class="right carousel-control" href="#bynImgCarousel" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                              </a>
+                            </div> <!-- Carousel -->
+                            <div style="max-height: 80px; overflow: scroll;">
+                              <center>
+                                <h6>Extra garage space in san francisco is hard to come by, but this small space is perfect for anyone looking to keep a couple belongings here for an extended period of time. The garage is locked, climate controlled, and you will hav4 24-hour access!</h6>
+                              <center>
+                            </div>
+                            <hr class="colorgraph">
+                            <div class="row">
+                                <div class="col-xs-5">
+                                    <center>
+                                        <div>
+                                            <a class="btn btn-default btn-sign-up btn-block btn-lg" style="margin-bottom: 15px;">Edit</a>
+                                        </div>
+                                    </center>
+                                </div>
+                                <div class="col-xs-6">
+                                    <center>
+                                        <div>
+                                            <a class="btn btn-default btn-sign-up btn-block btn-lg" style="margin-bottom: 15px;">Delete</a>
+                                        </div>
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -160,19 +295,19 @@
             <script src="js/agency.min.js"></script>
 
             <script type="text/javascript">
-            $(function() {
-                $(".on").click(function() {
-                    $(this).addClass("backgroundActive");
-                });
-            });
+            // $(function() {
+            //     $(".on").click(function() {
+            //         $(this).addClass("backgroundActive");
+            //     });
+            // });
 
-            $('ul.profileTabs li').click(
-                function(e) {
-                    e.preventDefault(); // prevent the default action
-                    e.stopPropagation(); // stop the click from bubbling
-                    $(this).closest('ul').find('.on').removeClass('backgroundActive');
-                    $(this).parent().addClass('on');
-            });
+            // $('ul.profileTabs li').click(
+            //     function(e) {
+            //         e.preventDefault(); // prevent the default action
+            //         e.stopPropagation(); // stop the click from bubbling
+            //         $(this).closest('ul').find('.on').removeClass('backgroundActive');
+            //         $(this).parent().addClass('on');
+            // });
             </script>
         </div>
     </body>

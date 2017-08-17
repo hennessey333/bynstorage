@@ -9,7 +9,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Agency - Start Bootstrap Theme</title>
+    <title>Byn Hosting</title>
+
+    <link rel="icon" href="img/companyLogos/BynLogo2.png">
 
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -222,7 +224,7 @@
                         <span id="suggestedPricePerSqFt" type="text"> </span> per square foot per month
                         <br><br>
                         <h4>Set Your Byn's Monthly Rate Per Square Foot</h4>
-                        $ <input class="form-control priceCalc" name="price" type="number" min="0"/>
+                        $ <input class="form-control priceCalc" name="price" type="number" min="1" step="any"/>
                         <br><br>
                         Your custom price was calculated based on your Byn size and ammenities.
                         <br>
@@ -255,7 +257,6 @@
                         <br>
                         <label class="btn btn-default btn-lg">
                             Browse <input type="file" id="files" class="hidden" name="photos" accept="image/*" multiple>
-                            <
                         </label>
                         <output id="photoList"></output>
                         <br>
@@ -673,13 +674,13 @@
           .bind("geocode:result", function(event, result){
             $('#lat').val(result.geometry.location.lat());
             $('#lng').val(result.geometry.location.lng());
-            $.log("Result: " + result.formatted_address);
+            //$.log("Result: " + result.formatted_address);
           })
           .bind("geocode:error", function(event, status){
-            $.log("ERROR: " + status);
+            //$.log("ERROR: " + status);
           })
           .bind("geocode:multiple", function(event, results){
-            $.log("Multiple: " + results.length + " results found");
+            //$.log("Multiple: " + results.length + " results found");
           });
         
         $("#find").click(function(){

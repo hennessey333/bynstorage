@@ -117,9 +117,24 @@ module.exports = function(app, passport) {
     });
   });
 
-  // GET Privacy Policy page
+  // GET Profile page
   app.get('/profile', function(req, res) {
     res.sendFile(path.join(__dirname, 'public/profile.html'))
+  });
+
+  // GET Bookings page
+  app.get('/bookings', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public/bookings.html'))
+  });
+
+  // GET Messages page
+  app.get('/messages', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public/messages.html'))
+  });
+
+  // GET Payment page
+  app.get('/payment', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public/payment.html'))
   });
 
   // GET search page
@@ -140,6 +155,7 @@ module.exports = function(app, passport) {
   });
 
   app.post('/host2', upload.array('photos'), function(req, res) {
+    console.log("test")
     console.log("req.files", req.files);
     if (req.body.endAvailabilityRadio === 'Yes') {
       var range = req.body.when.split(' ');
@@ -250,7 +266,6 @@ module.exports = function(app, passport) {
   });
 
 }
-
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
