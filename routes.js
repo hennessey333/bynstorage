@@ -45,6 +45,9 @@ index.setSettings({
     'start',
     'end'
   ],
+  ranking: [
+  'geo'
+  ]
   //customRanking: ['desc(popularity)'],
 });
 

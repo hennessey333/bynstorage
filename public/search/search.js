@@ -1,6 +1,9 @@
 'use strict';
 /* global instantsearch */
 
+var where = $('#geocomplete').val();
+var when = $('#daterange').val();
+
 var search = instantsearch({
   appId: 'JZD3EA97SB',
   apiKey: 'e8bf94e0fd17d490c4ff903737db98a5',
@@ -14,23 +17,23 @@ var search = instantsearch({
 //   urlSync: true
 // });
 
-search.addWidget(
-  instantsearch.widgets.searchBox({
-    container: '#geocomplete',
-    placeholder: 'Search by Location',
-    autofocus: false,
-    poweredBy: false
-  })
-);
+// search.addWidget(
+//   instantsearch.widgets.searchBox({
+//     container: '#geocomplete',
+//     placeholder: 'Search by Location',
+//     autofocus: false,
+//     poweredBy: false
+//   })
+// );
 
-search.addWidget(
-  instantsearch.widgets.searchBox({
-    container: '#daterange',
-    placeholder: 'Search by Date',
-    autofocus: false,
-    poweredBy: false
-  })
-);
+// search.addWidget(
+//   instantsearch.widgets.searchBox({
+//     container: '#daterange',
+//     placeholder: 'Search by Date',
+//     autofocus: false,
+//     poweredBy: false
+//   })
+// );
 
 search.addWidget(
   instantsearch.widgets.stats({
@@ -95,21 +98,13 @@ search.addWidget(
 
 search.addWidget(
   instantsearch.widgets.rangeSlider({
-    container: '#distance',
-    attributeName: 'size',  // change this to distance when their is an attribute for it in the data
-    pips: false,
-    tooltips: {format: function(rawValue) {return parseInt(rawValue)}}
-  })
-  );
-
-search.addWidget(
-  instantsearch.widgets.rangeSlider({
     container: '#size',
     attributeName: 'size',  // change this to distance when their is an attribute for it in the data
     pips: false,
     tooltips: {format: function(rawValue) {return parseInt(rawValue)}}
   })
   );
+
 
 // search.addWidget(
 //   instantsearch.widgets.googleMaps({
@@ -146,14 +141,19 @@ var customMapWidget = {
 
   init: function(params) {
     this._helper = params.helper;
-
+    var initialLocation = new google.maps.LatLng(37.7749, -122.4194); // SF
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        });
+    }
     // Initialize the map
     var mapOptions = {
               // How zoomed in you want the map to start at (always required)
               zoom: 6,
 
               // The latitude and longitude to center the map (always required)
-              center: new google.maps.LatLng(37.7749, -122.4194), // SF
+              center: initialLocation,
 
               // How you would like to style the map. 
               // This is where you would paste any style found on Snazzy Maps.
