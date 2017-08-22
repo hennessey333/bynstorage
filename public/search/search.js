@@ -1,14 +1,22 @@
 'use strict';
 /* global instantsearch */
-
 var where = $('#geocomplete').val();
 var when = $('#daterange').val();
+
+var lat = $('#lat').val();
+var lng = $('#lng').val();
+var geolocation = lat + ',' + lng;
 
 var search = instantsearch({
   appId: 'JZD3EA97SB',
   apiKey: 'e8bf94e0fd17d490c4ff903737db98a5',
   indexName: 'byns',
-  urlSync: true
+  urlSync: true,
+  searchParameters: {
+  //     //'getRankingInfo': true,
+       aroundLatLng: geolocation,
+  //     aroundRadius: 100
+     }
 });
 // var search = instantsearch({
 //   appId: 'latency',
@@ -43,7 +51,7 @@ search.addWidget(
 
 var hitTemplate =
   '<div class="hit col-sm-3">' +
-  '<div class="pictures-wrapper">' +
+  '<div class="pictures-wrapper" onmouseover=highlightMarker(this) onmouseout=highlightMarker(this)>' +
     '<img class="picture" style="width: 150px; height: 150px" src="{{photos}}" />' +
     /*'<img class="profile" src="{{user.user.thumbnail_url}}" />' +*/
   '</div>' +
@@ -51,6 +59,24 @@ var hitTemplate =
   '<h6 class="media-heading">{{name}} | {{size} | {{price}}<br/>{{location}}</h6>' +
   '</div>' +
   '</div>';
+
+function toggleColor(marker) {
+  if (!marker.getIcon()) {
+      marker.setIcon('https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_white.png');
+  } else {
+      marker.setIcon(null)
+  }
+      // if (marker.getAnimation()) {
+      //   marker.setAnimation(null);
+      // } else {
+      //   marker.setAnimation(google.maps.Animation.BOUNCE);
+      // }
+    }
+
+function highlightMarker(arg) {
+  var index = $('.pictures-wrapper').index(arg);
+  toggleColor(markers[index]);
+}
 
 var noResultsTemplate = '<div class="text-center">No results found matching <strong>{{query}}</strong>.</div>';
 
@@ -100,8 +126,7 @@ search.addWidget(
   instantsearch.widgets.rangeSlider({
     container: '#size',
     attributeName: 'size',  // change this to distance when their is an attribute for it in the data
-    pips: false,
-    tooltips: {format: function(rawValue) {return parseInt(rawValue)}}
+    pips: false
   })
   );
 
@@ -111,15 +136,14 @@ search.addWidget(
 //     container: document.querySelector('#map')
 //   })
 // );
-
+var markers = [];
 var customMapWidget = {
   //_autocompleteContainer: document.getElementById('where'),
   //_mapContainer: document.getElementById('map'),
-  markers: [],
+  //markers: [],
 
   // Transform one hit to a Google Maps marker
   _hitToMarker: function(hit) {
-    console.log("hit", hit)
     var marker = new google.maps.Marker({
       //position: {lat: hit._geoloc.lat, lng: hit._geoloc.lng},
       position: new google.maps.LatLng(hit._geoloc.lat, hit._geoloc.lng),
@@ -150,7 +174,8 @@ var customMapWidget = {
     // Initialize the map
     var mapOptions = {
               // How zoomed in you want the map to start at (always required)
-              zoom: 6,
+              zoom: 12,
+              zoomControl: true,
 
               // The latitude and longitude to center the map (always required)
               center: initialLocation,
@@ -413,24 +438,49 @@ var customMapWidget = {
 
   render: function(params) {
     // Clear markers
-    this.markers.forEach(function (marker) {
+    markers.forEach(function (marker) {
       marker.setMap(null)
     });
 
     // Transform hits to Google Maps markers
-    this.markers = params.results.hits.map(this._hitToMarker.bind(this));
+    markers = params.results.hits.map(this._hitToMarker.bind(this));
 
     var bounds = new google.maps.LatLngBounds();
 
     // Make sure we display the good part of the maps
-    this.markers.forEach(function(marker) {
+    markers.forEach(function(marker) {
       bounds.extend(marker.getPosition());
     });
 
     this._map.fitBounds(bounds);
   }
+
 };
 
 search.addWidget(customMapWidget);
 
 search.start();
+
+    $(document).ready(function() {
+      console.log("test")
+      // make a .hover event
+      $('.pictures-wrapper').hover(
+       
+        // mouse in
+        function () {
+          console.log("here")
+          // first we need to know which <div class="marker"></div> we hovered
+          var index = $('.pictures-wrapper').index(this);
+          console.log("index", index)
+          markers[index].toggleBounce();
+        },
+        // mouse out
+        function () {
+          // first we need to know which <div class="marker"></div> we hovered
+          var index = $('.pictures-wrapper').index(this);
+          markers[index].toggleBounce();
+        }
+
+      );
+    });
+

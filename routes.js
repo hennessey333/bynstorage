@@ -11,8 +11,11 @@ var path = require('path');
 //var Project = require('../model/project');
 var strftime = require('strftime');
 var algoliasearch = require('algoliasearch');
+var algoliasearchHelper = require('algoliasearch-helper');
 
 var client = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
+var algoliaHelper = algoliasearchHelper(client, 'byns');
+
 var index = client.initIndex('byns');
 var Byn = require('./models/Byn')
 var aws = require('aws-sdk');
@@ -44,6 +47,10 @@ index.setSettings({
     'amenities',
     'start',
     'end'
+  ],
+  attributesForFaceting: [
+    'price',
+    'size'
   ],
   ranking: [
   'geo'
@@ -131,9 +138,22 @@ module.exports = function(app, passport) {
     // req.checkBody('when', 'A date range is required.').notEmpty();
     // var errors = req.validationErrors();
     // console.log(errors);
+    var lat = parseFloat(req.body.lat);
+    var lng = parseFloat(req.body.lng);
     var where = req.body.where;
     var when = req.body.when;
-    res.sendFile(path.join(__dirname, 'public/search/index.html'))
+    // var test = lat + ',' + lng;
+    // console.log("test", test)
+    // algoliaHelper.setQueryParameter('getRankingInfo', true);
+    // algoliaHelper.setQueryParameter('aroundLatLng', test);
+    // algoliaHelper.search();
+    // algoliaHelper.on('result', function(results) { 
+      // console.log("results", results)
+      // console.log("state", algoliaHelper.state)
+      res.render('search.ejs', {lat, lng, where, when});
+    // });
+    //res.render('search.ejs', {lat, lng, where, when});
+    //res.sendFile(path.join(__dirname, 'public/search/index.html'))
   });
 
   app.get('/host', isLoggedIn, function(req, res) {
@@ -156,6 +176,9 @@ module.exports = function(app, passport) {
     var photos = req.files.map(item => (item.location));
     console.log("req.body req.files", req.body, req.files);
     var urlParams = {Bucket: S3_BUCKET, Key: req.files.filename};
+
+    var size = parseInt(req.body.sqFeet);
+    var price = parseFloat(req.body.price);
     new Byn({
         location: req.body.location,
         _geoloc: {
@@ -166,8 +189,8 @@ module.exports = function(app, passport) {
         name: req.body.name,
         description: req.body.description,
         amenities: req.body.amenities,
-        size: req.body.sqFeet,
-        price: req.body.price,
+        size: size,
+        price: price,
         start: start,
         end: end,
         photos: photos,
@@ -187,8 +210,8 @@ module.exports = function(app, passport) {
             name: req.body.name,
             description: req.body.description,
             amenities: req.body.amenities,
-            size: req.body.sqFeet,
-            price: req.body.price,
+            size: size,
+            price: price,
             start: start,
             end: end,
             photos: photos,

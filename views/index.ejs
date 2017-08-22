@@ -43,7 +43,9 @@
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
                 </button>
-                <img src="img/companyLogos/BynLogo2.png" class="logoimg">
+                <a href="/home">
+                    <img src="img/companyLogos/BynLogo2.png" class="logoimg">
+                </a>
                 <!-- <a class="navbar-brand page-scroll" href="#page-top">Byn</a> -->
             </div>
 
@@ -81,8 +83,12 @@
             <div class="intro-text">
                 <div class="intro-lead-in">Welcome To Byn</div>
                 <div class="intro-heading">A New Way To Store</div>
-                <form class="input-group input-group-lg" style="display: block" action="/search" method="get">
+                <form class="input-group input-group-lg" style="display: block" action="/search" method="post">
                     <input id="geocomplete" type="text" class="form-control" placeholder="Where?" name="where" aria-describedby="sizing-addon1" style="display: inline-block; width: 35%; margin-left: 15%;">
+                    <div id="geoloc">
+                        <input id="lat" type="hidden" name="lat" value="" />
+                        <input id="lng" type="hidden" name="lng" value="" />
+                    </div>
                     <input id="daterange" value="" type="text" class="form-control customBorderRadius" placeholder="When?" name="when" aria-describedby="sizing-addon1" style="display: inline-block; width: 35%; margin-right: 15%;">
                 <br><br><br><br>
                 <input class="page-scroll btn btn-xl" type="submit" value="Find A Byn"></input>
@@ -102,7 +108,7 @@
             </div>
             <div class="row text-center">
                 <div class="col-md-4">
-                    <a href="#" class="btn btn-xl">
+                    <a href="#" class="btn btn-xl" data-toggle="modal" data-target="#targetsignup">
                         <span class="service-heading" style="white-space: normal;">Become A Host</span>
                     </a>
                 </div>
@@ -453,6 +459,8 @@
         
         $("#geocomplete").geocomplete()
           .bind("geocode:result", function(event, result){
+            $('#lat').val(result.geometry.location.lat());
+            $('#lng').val(result.geometry.location.lng());
             $.log("Result: " + result.formatted_address);
           })
           .bind("geocode:error", function(event, status){

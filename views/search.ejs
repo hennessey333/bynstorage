@@ -1,0 +1,331 @@
+
+<!-- // updated /search/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+  <title>Byn Search</title>
+
+  <link rel="icon" href="img/companyLogos/BynLogo2.png">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css" />
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.js@1/dist/instantsearch.min.css" />
+  
+  <!--[if lte IE 9]>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <![endif]-->
+
+  <!-- Bootstrap Core CSS -->
+  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+
+  <!-- Theme CSS -->
+  <link href="../css/agency.css" rel="stylesheet">
+        
+  <style type="text/css">
+      /* Set a size for our map container, the Google Map will take up 100% of this container */
+      #map {
+          width: 50vw;
+          height: 85vh;
+      }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+    <nav id="mainNav" class="navbar navbar-default navbar-custom navbar-fixed-top affix" style="background-color: black; margin-bottom: 0 !important;">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a href="/home">
+                  <img src="../img/companyLogos/BynLogo2.png" class="logoimgsearchpage" style="margin-bottom: 10px">
+                </a>
+                <!-- <a class="navbar-brand page-scroll" href="#page-top">Byn</a> -->
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a href="/host">List Your Byn</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+  <!-- /Header -->
+
+  <!-- Filters and map -->
+  <div class="container-fluid" style="margin-top: 100px;">
+    <div class="row">
+
+      <!-- Left col -->
+      <div class="col-sm-7 aisdemo--left-column" style="overflow: scroll;">
+
+        <div class="aisdemo-filters">
+          <!-- Dates & Guests -->
+          <div class="row aisdemo-filter">
+            <div style="margin-top: 20px">
+              <div class="col-sm-2 aisdemo-filter-title">Where:</div>
+              <!-- <div class="col-sm-5" style="margin-top: 5px" id="geocomplete"></div> -->
+              <input id="geocomplete" type="text" class="form-control" value="<%-where%>" name="where" aria-describedby="sizing-addon1" style="display: block; width: 80%; margin-left: 3%;">
+              <div id="geoloc">
+                <input id="lat" type="hidden" name="lat" value="" />
+                <input id="lng" type="hidden" name="lng" value="" />
+              </div>
+            </div>
+            <div style="margin-top: 20px">
+              <div class="col-sm-2 aisdemo-filter-title">When:</div>
+             <!--  <div class="col-sm-5" style="margin-top: 5px" id="daterange"></div> -->
+              <input id="daterange" value="" type="text" class="form-control" value="<%-when%>" name="when" aria-describedby="sizing-addon1" style="display: block; width: 80%; margin-left: 3%;">
+            </div>
+          </div>
+          <!-- Room types -->
+          <div class="row aisdemo-filter">
+            <div class="col-sm-2 aisdemo-filter-title">Byn Type:</div>
+            <div id="room_types"></div>
+          </div>
+          <!-- Price -->
+          <div class="row aisdemo-filter">
+            <div class="col-sm-1 aisdemo-filter-title" style="margin-right:20px">Price:</div>
+            <div class="col-sm-4" id="price" ></div>
+            <div class="col-sm-1 aisdemo-filter-title" style="margin-right:20px; margin-left: 75px">Size:</div>
+            <div class="col-sm-4" id="size"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div id="stats"></div>
+        </div>
+
+        <!-- Results -->
+  <div class="container-fluid" id="results" style="overflow: scroll; margin: 0;">
+      <div class="row">
+        <div id="sort-by"></div>
+      </div>
+      <div class="row">
+          <div id="hits"></div>
+      </div>
+      <div class="row">
+          <div id="pagination"></div>
+
+            <center><div>
+                <a href="#" class="btn btn-xl" data-toggle="modal" data-target="#targetBynModal">
+                    <span class="service-heading">Test Modal</span>
+                </a>
+            </div></center>
+
+          <!-- <div class="thank-you">Data from <a href="https://www.airbnb.com/">airbnb.com</a>, user pics from <a href="https://randomuser.me/">randomuser.me</a></div> -->
+      </div>
+  </div>
+        <!-- /Results -->
+
+      </div>
+      <!-- /Left col -->
+
+      <!-- Right col -->
+      <div class="col-sm-5 aisdemo--right-column">
+        <div id="map"></div>
+      </div>
+      <!-- /Right col -->
+
+    </div>
+  </div>
+  <!-- /Filters and Map -->
+
+  <!-- Example Byn Modal -->
+    <div class="modal fade" id="targetBynModal" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <!-- <h4 class="modal-title" id="myModalLabel">Sign Up</h4> -->
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div style="margin-left: 3%; margin-right: 3%">
+                            <form role="form" action="/signin" method="post">
+                                <center>
+                                    <h3>Extra Space At Horizons<small><br>San Francisco, CA</small></h3>
+                                </center>
+                                <hr class="colorgraph">
+                                
+                                <div id="bynImgCarousel" class="carousel slide" data-ride="carousel">
+                                  <!-- Indicators -->
+                                  <ol class="carousel-indicators" style="bottom: 0 !important;">
+                                    <li data-target="#bynImgCarousel" data-slide-to="0" class="active"></li>
+                                    <li data-target="#bynImgCarousel" data-slide-to="1"></li>
+                                    <li data-target="#bynImgCarousel" data-slide-to="2"></li>
+                                  </ol>
+
+                                  <!-- Wrapper for slides -->
+                                  <center>
+                                    <div class="carousel-inner">
+                                      <div class="item active">
+                                        <img class="carousel" src="../img/header-bg2.jpg" alt="...">
+                                      </div>
+                                      <div class="item">
+                                        <img class="carousel" src="../img/about/2.jpg" alt="...">
+                                      </div>
+                                      <div class="item">
+                                        <img class="carousel" src="../img/about/3.jpg" alt="...">
+                                      </div>
+                                    </div>
+                                  </center>
+
+                                  <!-- Controls -->
+                                  <a class="left carousel-control" href="#bynImgCarousel" role="button" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                  </a>
+                                  <a class="right carousel-control" href="#bynImgCarousel" role="button" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right"></span>
+                                  </a>
+                                </div> <!-- Carousel -->
+                                <div style="max-height: 80px; overflow: scroll;">
+                                  <center>
+                                    <h6>Lorem ipsum dolor sit amet, integer eget ac egestas, odio dapibus justo semper nibh nunc. Urna sed scelerisque pede aenean gravida, malesuada praesent iaculis ipsum purus arcu. In libero tristique, ut mi, justo lacus porttitor luctus ac diam ab, luctus aliquam turpis sodales eu dolor suscipit. Lobortis laoreet faucibus aenean. Consectetuer dui sagittis sed laoreet, tincidunt tincidunt amet vivamus, blandit velit imperdiet sed, commodo odio, lorem mauris amet.</h6>
+                                  <center>
+                                </div>
+                                <hr class="colorgraph">
+                                <div class="row">
+                                  <div class="col-xs-6">
+                                    <center>
+                                      <a href="#" class="btn btn-xl" style="background-color: black; margin-bottom: 0;">
+                                        <span class="service-heading" style="white-space: normal;">Message Host</span>
+                                      </a>
+                                    </center>
+                                  </div class="col-xs-6">
+                                    <center>
+                                      <a href="#" class="btn btn-xl" style="background-color: black; margin-bottom: 0;">
+                                        <span class="service-heading" style="white-space: normal;">Book Byn</span>
+                                      </a>
+                                    </center>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+  <!-- jQuery -->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@1/dist/instantsearch.min.js"></script>
+  
+ <!--  <script src="https://cdn.jsdelivr.net/instantsearch-googlemaps/1/instantsearch-googlemaps.min.js"></script> -->
+
+    <!-- Geocomplete -->
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCinPgLpBRlw5s2-NoI8s5cgyEMR30mkcU&libraries=places"></script>
+<!--     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCinPgLpBRlw5s2-NoI8s5cgyEMR30mkcU&callback=initMap"
+  type="text/javascript"></script> -->
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> -->
+    <script src="../js/jquery.geocomplete.js"></script>
+
+    <!-- Moment JS for Date Range Picker -->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+    <!-- Include Date Range Picker -->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+    <!-- Date Range Picker -->
+    <script type="text/javascript">
+    $(function() {
+
+        $("#daterange").daterangepicker({
+          autoUpdateInput: false,
+          locale: {
+              cancelLabel: 'Clear'
+          },
+          applyClass: 'btn-default',
+          opens: 'center'
+      });
+
+      $("#daterange").on('apply.daterangepicker', function(ev, picker) {
+          $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+      });
+
+      $("#daterange").on('cancel.daterangepicker', function(ev, picker) {
+          $(this).val('');
+      });
+
+  });
+    </script>
+
+    <!-- Autofill Location Search -->
+
+    <script>
+       $('#lat').val(<%-lat%>);
+       $('#lng').val(<%-lng%>);
+    </script>
+
+    <script>
+      $(function(){
+        
+        $("#geocomplete").geocomplete()
+          .bind("geocode:result", function(event, result){
+            $('#lat').val(result.geometry.location.lat());
+            $('#lng').val(result.geometry.location.lng());
+            $.log("Result: " + result.formatted_address);
+          })
+          .bind("geocode:error", function(event, status){
+            $.log("ERROR: " + status);
+          })
+          .bind("geocode:multiple", function(event, results){
+            $.log("Multiple: " + results.length + " results found");
+          });
+        
+        $("#find").click(function(){
+          $("#geocomplete").trigger("geocode");
+        });
+        
+        
+        $("#examples a").click(function(){
+          $("#geocomplete").val($(this).text()).trigger("geocode");
+          return false;
+        });
+        
+      });
+    </script>
+
+    <!-- Theme JavaScript -->
+    <script src="../js/agency.min.js"></script>
+
+    <!-- Algolia -->
+    <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch-helper@2.21.2/dist/algoliasearch.helper.min.js"></script>
+
+    <script src="/search/search.js"></script>
+
+</body>
+</html>
