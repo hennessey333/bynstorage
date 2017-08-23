@@ -24,8 +24,8 @@ var multerS3 = require('multer-s3');
 var S3_BUCKET = process.env.AWS_BUCKET;
 
 var s3 = new aws.S3();
-  var upload = multer({
-    storage: multerS3({
+var upload = multer({
+  storage: multerS3({
     s3: s3,
     bucket: S3_BUCKET,
     acl: 'public-read',
@@ -34,23 +34,22 @@ var s3 = new aws.S3();
       cb(null, file);
     }
   })
-  });
+});
 
 index.setSettings({
   searchableAttributes: [
-    'name',
-    'location',
-    'price',
-    'size',
-    'price',
-    'description',
-    'amenities',
-    'start',
-    'end'
+  'name',
+  'location',
+  'type',
+  'size',
+  'price',
+  'description',
+  'amenities',
   ],
   attributesForFaceting: [
-    'price',
-    'size'
+  'price',
+  'size',
+  'type'
   ],
   ranking: [
   'geo'
@@ -74,28 +73,28 @@ module.exports = function(app, passport) {
 
   // GET about us page
   app.get('/aboutus', function(req, res) {
-      res.render('aboutus', {
-        user : req.user,
-        signinMessage: req.flash('signinMessage'),
-        signupMessage: req.flash('signupMessage')
+    res.render('aboutus', {
+      user : req.user,
+      signinMessage: req.flash('signinMessage'),
+      signupMessage: req.flash('signupMessage')
     });
   });
 
   // GET how to rent page
   app.get('/howtorent', function(req, res) {
     res.render('howtorent', {
-        user : req.user,
-        signinMessage: req.flash('signinMessage'),
-        signupMessage: req.flash('signupMessage')
+      user : req.user,
+      signinMessage: req.flash('signinMessage'),
+      signupMessage: req.flash('signupMessage')
     });
   });
 
   // GET how to host page
   app.get('/howtohost', function(req, res) {
     res.render('howtohost', {
-        user : req.user,
-        signinMessage: req.flash('signinMessage'),
-        signupMessage: req.flash('signupMessage')
+      user : req.user,
+      signinMessage: req.flash('signinMessage'),
+      signupMessage: req.flash('signupMessage')
     });
     // res.sendFile(path.join(__dirname, 'public/howtohost.html'))
   });
@@ -103,27 +102,27 @@ module.exports = function(app, passport) {
   // GET FAQ page
   app.get('/faq', function(req, res) {
     res.render('faq', {
-        user : req.user,
-        signinMessage: req.flash('signinMessage'),
-        signupMessage: req.flash('signupMessage')
+      user : req.user,
+      signinMessage: req.flash('signinMessage'),
+      signupMessage: req.flash('signupMessage')
     });
   });
 
   // GET Terms of Use page
   app.get('/termsofuse', function(req, res) {
     res.render('termsofuse', {
-        user : req.user,
-        signinMessage: req.flash('signinMessage'),
-        signupMessage: req.flash('signupMessage')
+      user : req.user,
+      signinMessage: req.flash('signinMessage'),
+      signupMessage: req.flash('signupMessage')
     });
   });
 
   // GET Privacy Policy page
   app.get('/privacypolicy', function(req, res) {
     res.render('privacypolicy', {
-        user : req.user,
-        signinMessage: req.flash('signinMessage'),
-        signupMessage: req.flash('signupMessage')
+      user : req.user,
+      signinMessage: req.flash('signinMessage'),
+      signupMessage: req.flash('signupMessage')
     });
   });
 
@@ -134,6 +133,12 @@ module.exports = function(app, passport) {
 
   // GET Bookings page
   app.get('/bookings', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public/bookings.html'))
+  });
+
+  // POST Bookings: Make new booking
+  app.post('/bookings', function(req, res) {
+    
     res.sendFile(path.join(__dirname, 'public/bookings.html'))
   });
 
@@ -174,20 +179,20 @@ module.exports = function(app, passport) {
   app.get('/host', isLoggedIn, function(req, res) {
     res.render('host1', {
         user : req.user // get the user out of session and pass to template
-    });
+      });
   });
 
   app.post('/host2', upload.array('photos'), function(req, res) {
-    console.log("test")
+    console.log("req.body", req.body)
     console.log("req.files", req.files);
     if (req.body.endAvailabilityRadio === 'Yes') {
       var range = req.body.when.split(' ');
-      var start = range[0];
-      var end = range[2];
+      var start = new Date(range[0]).getTime();
+      var end = new Date(range[2]).getTime();
     }
     else {
-      var start = req.body.dateStart;
-      var end = null;
+      var start = new Date(req.body.dateStart).getTime();
+      var end = 2.2e+14;
     }
     var photos = req.files.map(item => (item.location));
     console.log("req.body req.files", req.body, req.files);
@@ -196,48 +201,58 @@ module.exports = function(app, passport) {
     var size = parseInt(req.body.sqFeet);
     var price = parseFloat(req.body.price);
     new Byn({
-        location: req.body.location,
-        _geoloc: {
-              lat: parseFloat(req.body.lat),
-              lng: parseFloat(req.body.lng)
-            },
-        type: req.body.type,
-        name: req.body.name,
-        description: req.body.description,
-        amenities: req.body.amenities,
-        size: size,
-        price: price,
-        start: start,
-        end: end,
-        photos: photos,
-        host: req.user
-      }).save(function(err, byn) {
-        if (err) {
-          console.log("Error", err);
-        }
-        else {
-          index.addObject({
-            location: req.body.location,
-            _geoloc: {
-              lat: parseFloat(req.body.lat),
-              lng: parseFloat(req.body.lng)
-            },
-            type: req.body.type,
-            name: req.body.name,
-            description: req.body.description,
-            amenities: req.body.amenities,
-            size: size,
-            price: price,
-            start: start,
-            end: end,
-            photos: photos,
-            host: req.user,
-          }, byn._id, function(err, content) {
-            if (err) console.log("Error", err);
-            else res.redirect('/profile');
-          });
-       }
-      });
+      location: req.body.location,
+      _geoloc: {
+        lat: parseFloat(req.body.lat),
+        lng: parseFloat(req.body.lng)
+      },
+      type: req.body.type,
+      name: req.body.name,
+      description: req.body.description,
+      amenities: req.body.amenities,
+      size: size,
+      price: price,
+      start: start,
+      end: end,
+      photos: photos,
+      host: req.user
+    }).save(function(err, byn) {
+      if (err) {
+        console.log("Error", err);
+      }
+      else {
+        index.addObject({
+          location: req.body.location,
+          _geoloc: {
+            lat: parseFloat(req.body.lat),
+            lng: parseFloat(req.body.lng)
+          },
+          type: req.body.type,
+          name: req.body.name,
+          description: req.body.description,
+          amenities: req.body.amenities,
+          size: size,
+          price: price,
+          start: start,
+          end: end,
+          photos: photos,
+          host: req.user,
+        }, byn._id, function(err, content) {
+          if (err) console.log("Error", err);
+          else res.redirect('/profile');
+        });
+      }
+    });
+  });
+
+  app.get('/byn/:id', function(req, res){
+    Byn.findById(req.params.id, function(err, byn){
+      if (err) {
+        console.log("Error", err);
+        res.end();
+      }
+      else res.json({success: true, byn: byn});
+    });
   });
 
   // // POST home page to search page
@@ -263,29 +278,29 @@ module.exports = function(app, passport) {
   app.get('/home', isLoggedIn, function(req, res) {
     res.render('home', {
         user : req.user // get the user out of session and pass to template
-    });
+      });
   });
 
   // =====================================
   // LOGOUT ==============================
   // =====================================
   app.get('/logout', function(req, res) {
-      req.logout();
-      res.redirect('/');
+    req.logout();
+    res.redirect('/');
   });
 
   app.post('/signup', passport.authenticate('local-signup', {
       successRedirect : '/home', // redirect to the secure profile section
       failureRedirect : '/', // redirect back to the home page if there is an error
       failureFlash : true // allow flash messages
-  }));
+    }));
 
   // process the login form
   app.post('/signin', passport.authenticate('local-signin', {
       // successRedirect : '/home', // redirect to the secure profile section
       failureRedirect : '/', // redirect back to the signup page if there is an error
       failureFlash : true // allow flash messages
-  }), function(req, res) {
+    }), function(req, res) {
     req.session.save(function(err) {
       res.redirect('/home')
     })
@@ -297,9 +312,9 @@ module.exports = function(app, passport) {
 function isLoggedIn(req, res, next) {
     // if user is authenticated in the session, carry on 
     if (req.isAuthenticated()){
-        next();
+      next();
     }
 
     // if they aren't redirect them to the home page
     else res.redirect('/');
-}
+  }

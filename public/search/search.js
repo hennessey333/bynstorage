@@ -7,6 +7,23 @@ var lat = $('#lat').val();
 var lng = $('#lng').val();
 var geolocation = lat + ',' + lng;
 
+var range = when.split('-');
+var start = new Date(range[0]).getTime();
+var end = new Date(range[1]).getTime();
+
+$('input').change(function() {
+  where = $('#geocomplete').val();
+  when = $('#daterange').val();
+
+  lat = $('#lat').val();
+  lng = $('#lng').val();
+  geolocation = lat + ',' + lng;
+
+  range = when.split('-');
+  start = new Date(range[0]).getTime();
+  end = new Date(range[1]).getTime();
+})
+
 var search = instantsearch({
   appId: 'JZD3EA97SB',
   apiKey: 'e8bf94e0fd17d490c4ff903737db98a5',
@@ -14,9 +31,11 @@ var search = instantsearch({
   urlSync: true,
   searchParameters: {
   //     //'getRankingInfo': true,
-       aroundLatLng: geolocation,
+  filters: `start < ${start} AND end > ${end}`,
+    //}, 
+    aroundLatLng: geolocation,
   //     aroundRadius: 100
-     }
+}
 });
 // var search = instantsearch({
 //   appId: 'latency',
@@ -47,24 +66,24 @@ search.addWidget(
   instantsearch.widgets.stats({
     container: '#stats'
   })
-);
+  );
 
 var hitTemplate =
-  '<div class="hit col-sm-3">' +
-  '<div class="pictures-wrapper" onmouseover=highlightMarker(this) onmouseout=highlightMarker(this)>' +
-    '<img class="picture" style="width: 150px; height: 150px" src="{{photos}}" />' +
-    /*'<img class="profile" src="{{user.user.thumbnail_url}}" />' +*/
-  '</div>' +
-  '<div class="infos">' +
-  '<h6 class="media-heading">{{name}} | {{size} | {{price}}<br/>{{location}}</h6>' +
-  '</div>' +
-  '</div>';
+'<div class="hit col-sm-3">' +
+'<a id="modal-wrapper" href="#" data-id="{{objectID}}" data-toggle="modal" data-target="#targetBynModal"><div class="pictures-wrapper" onmouseover=highlightMarker(this) onmouseout=highlightMarker(this)>' +
+'<img class="picture" style="width: 150px; height: 150px" src="{{photos}}" />' +
+/*'<img class="profile" src="{{user.user.thumbnail_url}}" />' +*/
+'</div></a>' +
+'<div class="infos" style="padding-top: 5px">' +
+'<h6 class="media-heading" style="text-align: center">{{type}} | {{size}} sqft | ${{price}}/month</h6>' +
+'</div>' +
+'</div>';
 
 function toggleColor(marker) {
   if (!marker.getIcon()) {
-      marker.setIcon('https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_white.png');
+    marker.setIcon('https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_white.png');
   } else {
-      marker.setIcon(null)
+    marker.setIcon(null)
   }
       // if (marker.getAnimation()) {
       //   marker.setAnimation(null);
@@ -73,62 +92,62 @@ function toggleColor(marker) {
       // }
     }
 
-function highlightMarker(arg) {
-  var index = $('.pictures-wrapper').index(arg);
-  toggleColor(markers[index]);
-}
-
-var noResultsTemplate = '<div class="text-center">No results found matching <strong>{{query}}</strong>.</div>';
-
-search.addWidget(
-  instantsearch.widgets.hits({
-    container: '#hits',
-    hitsPerPage: 12,
-    templates: {
-      empty: noResultsTemplate,
-      item: hitTemplate
+    function highlightMarker(arg) {
+      var index = $('.pictures-wrapper').index(arg);
+      toggleColor(markers[index]);
     }
-  })
-);
 
-search.addWidget(
-  instantsearch.widgets.pagination({
-    container: '#pagination',
-    scrollTo: '#results',
-    cssClasses: {
-      root: 'pagination',
-      active: 'active'
-    }
-  })
-);
+    var noResultsTemplate = '<div class="text-center">No results found matching <strong>{{query}}</strong>.</div>';
 
-search.addWidget(
-  instantsearch.widgets.refinementList({
-    container: '#room_types',
-    attributeName: 'type',
-    operator: 'or',
-    cssClasses: {item: ['col-sm-3']},
-    limit: 10
-  })
-);
+    search.addWidget(
+      instantsearch.widgets.hits({
+        container: '#hits',
+        hitsPerPage: 12,
+        templates: {
+          empty: noResultsTemplate,
+          item: hitTemplate
+        }
+      })
+      );
 
-search.addWidget(
-  instantsearch.widgets.rangeSlider({
-    container: '#price',
-    attributeName: 'price',
-    pips: false,
-    tooltips: {format: function(rawValue) {return '$' + parseInt(rawValue)}}
-  })
-  );
+    search.addWidget(
+      instantsearch.widgets.pagination({
+        container: '#pagination',
+        scrollTo: '#results',
+        cssClasses: {
+          root: 'pagination',
+          active: 'active'
+        }
+      })
+      );
+
+    search.addWidget(
+      instantsearch.widgets.refinementList({
+        container: '#room_types',
+        attributeName: 'type',
+        operator: 'or',
+        cssClasses: {item: ['col-sm-3']},
+        limit: 10
+      })
+      );
+
+    search.addWidget(
+      instantsearch.widgets.rangeSlider({
+        container: '#price',
+        attributeName: 'price',
+        pips: false,
+        tooltips: {format: function(rawValue) {return '$' + parseInt(rawValue)}}
+      })
+      );
 
 
-search.addWidget(
-  instantsearch.widgets.rangeSlider({
-    container: '#size',
+    search.addWidget(
+      instantsearch.widgets.rangeSlider({
+        container: '#size',
     attributeName: 'size',  // change this to distance when their is an attribute for it in the data
     pips: false
   })
-  );
+      );
 
 
 // search.addWidget(
@@ -167,9 +186,9 @@ var customMapWidget = {
     this._helper = params.helper;
     var initialLocation = new google.maps.LatLng(37.7749, -122.4194); // SF
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-          initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        });
+      navigator.geolocation.getCurrentPosition(function (position) {
+        initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      });
     }
     // Initialize the map
     var mapOptions = {
@@ -421,7 +440,7 @@ var customMapWidget = {
                 ]
               }
               ]
-          };
+            };
 
           // Get the HTML DOM element that will contain your map 
           // We are using a div with id="map" seen below in the <body>
@@ -461,26 +480,26 @@ search.addWidget(customMapWidget);
 
 search.start();
 
-    $(document).ready(function() {
-      console.log("test")
-      // make a .hover event
-      $('.pictures-wrapper').hover(
-       
-        // mouse in
-        function () {
-          console.log("here")
-          // first we need to know which <div class="marker"></div> we hovered
-          var index = $('.pictures-wrapper').index(this);
-          console.log("index", index)
-          markers[index].toggleBounce();
-        },
-        // mouse out
-        function () {
-          // first we need to know which <div class="marker"></div> we hovered
-          var index = $('.pictures-wrapper').index(this);
-          markers[index].toggleBounce();
-        }
+    // $(document).ready(function() {
+    //   console.log("test")
+    //   // make a .hover event
+    //   $('.pictures-wrapper').hover(
+    
+    //     // mouse in
+    //     function () {
+    //       console.log("here")
+    //       // first we need to know which <div class="marker"></div> we hovered
+    //       var index = $('.pictures-wrapper').index(this);
+    //       console.log("index", index)
+    //       markers[index].toggleBounce();
+    //     },
+    //     // mouse out
+    //     function () {
+    //       // first we need to know which <div class="marker"></div> we hovered
+    //       var index = $('.pictures-wrapper').index(this);
+    //       markers[index].toggleBounce();
+    //     }
 
-      );
-    });
+    //   );
+    // });
 
