@@ -27,14 +27,15 @@ var bynSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    start: {
-        type: String,
-        required: true
-    },
-    end: {
-        type: String,
-        //required: true
-    },
+    times: Array,
+    // start: {
+    //     type: String,
+    //     required: true
+    // },
+    // end: {
+    //     type: String,
+    //     //required: true
+    // },
     photos: {
         // data: Buffer,
         // contentType: String,

@@ -138,8 +138,95 @@ module.exports = function(app, passport) {
 
   // POST Bookings: Make new booking
   app.post('/bookings', function(req, res) {
-    
-    res.sendFile(path.join(__dirname, 'public/bookings.html'))
+    var startMs = req.body.start;
+    var endMs = req.body.end;
+    var startNext = startMs + (24 * 60 * 60 * 1000);
+    var endNext = endMs + (24 * 60 * 60 * 1000);
+    // var startDate = new Date(startMs);
+    // var endDate = new Date(endMs);
+    // var startNext = startDate.setDate(startDate.getDate() + 1).toLocaleDateString('en-US');
+    // var endNext = endDate.setDate(endDate.getDate() + 1).toLocaleDateString('en-US');
+    var host = null;
+    Byn.findById(req.body.mongoId)
+    .then(function(byn) {
+      host = byn.host;
+      for (var i = 0; i < byn.times.length; i++) {
+        var startDb = byn.times[i].start;
+        var endDb = byn.times[i].end;
+        if (startDb === startMs && endDb === endMs) {
+          byn.times.splice(i, 1);
+          break;
+        }
+        else if (startDb === startMs && endDb > endMs) {
+          byn.times[i].start = startNext;
+          break;
+        }
+        else if (startDb < startMs && endDb === endMs) {
+          byn.times[i].end = endNext;
+          break;
+        }
+        else if (startDb < startMs && endDb > endMs) {
+          var temp = byn.times[i].end;
+          byn.times[i].end = startNext;
+          byn.times.push({start: endNext, end: temp});
+          break;
+        }
+      }
+    })
+    .then(new Booking({
+      host: host,
+      client: req.user,
+      byn: req.body.mongoId,
+      movein: req.body.deliveryTime,
+      notes: req.body.deliveryNotes,
+      start: req.body.start,
+      end: req.body.end,
+    }).save())
+    .catch(function(err) {
+      console.log("Caught error", err);
+    })
+
+    index.getObject(req.body.algId, function(err, byn){
+      if (err) console.log("Error", err);
+      else {
+        if (byn.start === startMs && byn.end > endMs) {
+          byn.start = startNext;
+        }
+        else if (byn.start < startMs && byn.end === endMs) {
+          byn.end = endNext;
+        }
+        else if (byn.start < startMs && byn.end > endMs) {
+          var temp = byn.end;
+          byn.end = startNext;
+          index.addObject({
+            name: byn.name,
+            location: byn.location,
+            price: byn.price,
+            size: byn.size,
+            description: byn.description,
+            amenities: byn.amenities,
+            _geoloc: byn._geoloc,
+            type: byn.type,
+            photos: byn.photos,
+            host: byn.host,
+            bynref: byn.bynref,
+            start: endNext,
+            end: byn.end
+          }, function(err, content) {
+            if (err) console.log("Error", err);
+          });
+        }
+        else if (byn.start === startMs && byn.end === endMs) {
+          index.deleteObject(req.body.algId, function(err){ if (err) console.log("Error", err); });
+        }
+        else {
+          console.log("Uh-oh - algolia object not found?")
+        }
+      }
+    })
+
+    res.redirect('/bookings');
+    //res.sendFile(path.join(__dirname, 'public/bookings.html'))
   });
 
   // GET Messages page
@@ -162,17 +249,7 @@ module.exports = function(app, passport) {
     var lng = parseFloat(req.body.lng);
     var where = req.body.where;
     var when = req.body.when;
-    // var test = lat + ',' + lng;
-    // console.log("test", test)
-    // algoliaHelper.setQueryParameter('getRankingInfo', true);
-    // algoliaHelper.setQueryParameter('aroundLatLng', test);
-    // algoliaHelper.search();
-    // algoliaHelper.on('result', function(results) { 
-      // console.log("results", results)
-      // console.log("state", algoliaHelper.state)
-      res.render('search.ejs', {lat, lng, where, when});
-    // });
-    //res.render('search.ejs', {lat, lng, where, when});
+    res.render('search.ejs', {lat, lng, where, when});
     //res.sendFile(path.join(__dirname, 'public/search/index.html'))
   });
 
@@ -199,7 +276,7 @@ module.exports = function(app, passport) {
     var urlParams = {Bucket: S3_BUCKET, Key: req.files.filename};
 
     var size = parseInt(req.body.sqFeet);
-    var price = parseFloat(req.body.price);
+    var price = parseFloat(req.body.price).toFixed(2);
     new Byn({
       location: req.body.location,
       _geoloc: {
@@ -212,8 +289,9 @@ module.exports = function(app, passport) {
       amenities: req.body.amenities,
       size: size,
       price: price,
-      start: start,
-      end: end,
+      times: [{start, end}],
+      // start: start,
+      // end: end,
       photos: photos,
       host: req.user
     }).save(function(err, byn) {
@@ -237,6 +315,7 @@ module.exports = function(app, passport) {
           end: end,
           photos: photos,
           host: req.user,
+          bynref: byn._id
         }, byn._id, function(err, content) {
           if (err) console.log("Error", err);
           else res.redirect('/profile');
@@ -246,6 +325,14 @@ module.exports = function(app, passport) {
   });
 
   app.get('/byn/:id', function(req, res){
+    // index.getObject(req.params.id, function(err, byn) {
+    //   if (err) {
+    //     console.log("Error", err);
+    //     res.end();
+    //   }
+    //   res.json({success: true, byn: byn});
+    // });
+
     Byn.findById(req.params.id, function(err, byn){
       if (err) {
         console.log("Error", err);

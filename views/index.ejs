@@ -114,7 +114,6 @@
                         <span class="service-heading" style="white-space: normal;">Become A Host</span>
                     </a>
                 </div>
-                <div class="col-md-2"></div>
                 <div class="col-md-4">
                     <a href="#" class="btn btn-xl" data-toggle="modal" data-target="#targetsignup">
                         <span class="service-heading">Sign Up</span>
@@ -465,13 +464,13 @@
           .bind("geocode:result", function(event, result){
             $('#lat').val(result.geometry.location.lat());
             $('#lng').val(result.geometry.location.lng());
-            $.log("Result: " + result.formatted_address);
+            // $.log("Result: " + result.formatted_address);
           })
           .bind("geocode:error", function(event, status){
-            $.log("ERROR: " + status);
+            // $.log("ERROR: " + status);
           })
           .bind("geocode:multiple", function(event, results){
-            $.log("Multiple: " + results.length + " results found");
+            // $.log("Multiple: " + results.length + " results found");
           });
         
         $("#find").click(function(){

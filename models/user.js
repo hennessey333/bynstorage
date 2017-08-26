@@ -11,6 +11,18 @@ var userSchema = mongoose.Schema({
         email                   : String,
         password                : String
      },
+     bookings: Array,
+         // {
+         //    host: id
+         //    client: id
+         //    byn: id
+         //    movein: String
+         //    notes: String
+         //    start: Number
+         //    end: Number
+         // }
+    photo: String,
+    bio: String,
     // facebook         : {
     //     id           : String,
     //     token        : String,

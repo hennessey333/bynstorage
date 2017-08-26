@@ -70,13 +70,13 @@ search.addWidget(
 
 var hitTemplate =
 '<div class="hit col-sm-3">' +
-'<a id="modal-wrapper" href="#" data-id="{{objectID}}" data-toggle="modal" data-target="#targetBynModal"><div class="pictures-wrapper" onmouseover=highlightMarker(this) onmouseout=highlightMarker(this)>' +
+'<a id="modal-wrapper" href="#" data-id="{{objectID}}" data-bynref="{{bynref}}" data-toggle="modal" data-target="#targetBynModal" style="text-decoration: none; color: black"><div class="pictures-wrapper" onmouseover=highlightMarker(this) onmouseout=highlightMarker(this)>' +
 '<img class="picture" style="width: 150px; height: 150px" src="{{photos}}" />' +
 /*'<img class="profile" src="{{user.user.thumbnail_url}}" />' +*/
-'</div></a>' +
+'</div>' +
 '<div class="infos" style="padding-top: 5px">' +
 '<h6 class="media-heading" style="text-align: center">{{type}} | {{size}} sqft | ${{price}}/month</h6>' +
-'</div>' +
+'</div></a>' +
 '</div>';
 
 function toggleColor(marker) {
@@ -463,6 +463,14 @@ var customMapWidget = {
 
     // Transform hits to Google Maps markers
     markers = params.results.hits.map(this._hitToMarker.bind(this));
+    var query = new google.maps.Marker({
+      //position: {lat: hit._geoloc.lat, lng: hit._geoloc.lng},
+      position: new google.maps.LatLng(lat, lng),
+      map: this._map,
+      title: 'Queried Location'
+    });
+    query.setIcon('https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_blue.png');
+    markers.push(query);
 
     var bounds = new google.maps.LatLngBounds();
 
@@ -470,6 +478,7 @@ var customMapWidget = {
     markers.forEach(function(marker) {
       bounds.extend(marker.getPosition());
     });
+
 
     this._map.fitBounds(bounds);
   }
@@ -484,7 +493,7 @@ search.start();
     //   console.log("test")
     //   // make a .hover event
     //   $('.pictures-wrapper').hover(
-    
+
     //     // mouse in
     //     function () {
     //       console.log("here")

@@ -79,6 +79,8 @@ module.exports = function(passport) {
                 newUser.local.email      = email;
                 newUser.local.lastname   = req.body.lastname;
                 newUser.local.firstname  = req.body.firstname;
+                newUser.photo = null;
+                newUser.bio = null;
 
                 // save the user
                 newUser.save(function(err) {

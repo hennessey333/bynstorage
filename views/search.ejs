@@ -12,6 +12,9 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+
   <title>Byn Search</title>
 
   <link rel="icon" href="img/companyLogos/BynLogo2.png">
@@ -108,9 +111,7 @@
           <!-- Room types -->
           <div class="row aisdemo-filter">
             <div class="col-sm-2 aisdemo-filter-title">Byn Type:</div>
-            <div style="display: flex; align-items: space-around; justify-content: space-around;">
               <div id="room_types"></div>
-            </div>
           </div>
           <!-- Price -->
           <div class="row aisdemo-filter">
@@ -160,7 +161,7 @@
     </div>
     <!-- /Filters and Map -->
 
-    <!-- Example Byn Modal -->
+    <!-- Main Byn Profile Modal -->
     <div class="modal fade" id="targetBynModal" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
       <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -236,6 +237,7 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+    <!-- Inner Byn Booking Modal -->
     <div class="modal fade" id="booking-modal" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
       <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -246,14 +248,58 @@
           <div class="modal-body">
             <div class="row">
               <div style="margin-left: 3%; margin-right: 3%">
+                <center><h4 style="display: inline"> Your Total: <p style="display: inline">$</p><p style="display: inline" id='price-total'>40.60</p></h4></center><br/>
                 <form role="form" action="/bookings" method="post">
-                  <label for="delivery-time">Preferred Move-In Time:</label>
-                  <input class="form-control" type="text" name="delivery-time" placeholder="2:00 - 4:00 PM" />
+                  <label for="deliveryTime">Preferred Move-In Time:</label>
+                  <input class="form-control" type="text" name="deliveryTime" placeholder="2:00 - 4:00 PM" />
                   <br/>
-                  <label for="delivery-notes">Special Notes to Host:</label> 
-                  <textarea class="form-control" id="delivery-notes" rows="3"></textarea>
-                  <center><br/><br/>
-                  <input class="btn btn-xl" type="submit" value="Confirm Booking!" />
+                  <label for="deliveryNotes">Special Notes to Host:</label> 
+                  <textarea class="form-control" id="deliveryNotes" rows="3"></textarea>
+                  <input id="byn-mongo-id" type="hidden" name="mongoId" value="" />
+                  <input id="byn-alg-id" type="hidden" name="algId" value="" />
+                  <input id="start-day" type="hidden" name="start" value="" />
+                  <input id="end-day" type="hidden" name="end" value="" />
+                  <center><br/>
+
+                  <!-- Handle payments through PayPal -->
+                    <div id="paypal-button"></div>
+                    <script>
+                      paypal.Button.render({
+
+                                env: 'sandbox', 
+
+                                client: {
+                                    sandbox:    'AVkb_Tf1gu57f7B0Gi6dIMJ4sIBsHyFeJWzQBv3jHmP28PtExZ_tP59btQchM0K7GIHJzkzKyjnxoBLC',
+                                    production: 'AWPOHmb5ZFenMpcTCpfCjnBC5Fd8ADNrMZSyhmh-DKWAp0f0b3ySzYPKYz_-CBptt4y6b8wsY0L0rRsE'
+                                },
+
+                                commit: true, // Show a 'Pay Now' button
+
+                                payment: function(data, actions) {
+                                    var total = $('#price-total').text();
+                                    return actions.payment.create({
+                                        payment: {
+                                            transactions: [
+                                                {
+                                                    amount: { total: total, currency: 'USD' }
+                                                }
+                                            ]
+                                        }
+                                    });
+                                },
+
+                                // On success, show confirmation button
+                                onAuthorize: function(data, actions) {
+                                    return actions.payment.execute().then(function(payment) {
+                                        $('#paypal-button').html('<h5 style="color: #ff5e61">Payment Complete - Almost done!</h5>');
+                                        $('#confirm-btn').html('<input class="btn btn-xl" type="submit" value="Confirm Booking!" />');
+                                    });
+                                }
+
+                            }, '#paypal-button');
+                    </script>
+                    <div id="confirm-btn"></div>
+                  
                   </center>
                   <hr class="colorgraph">
                 </form>
@@ -357,18 +403,26 @@
 
 <script src="/search/search.js"></script>
 
-<!-- Hit Modals -->
+<!-- Render Hit Modals -->
 <script>
   $(document).on("click", "#modal-wrapper", function () {
+    var id = $(this).data('bynref');
     var id = $(this).data('id');
     console.log("id is", id)
+    var self = $(this);
     $.ajax({
       url: '/byn/' + id,
       method: 'get',
       success: function(result) {
         var byn = result.byn;
-        console.log(result.byn);
-        $(".modal-body #modal-title").html(`${byn.name}<small><br />${byn.location}</small><br/><h6>${byn.type}: ${byn.size} square feet at $${byn.price}/month</h6>`);
+        var price = parseFloat(self.find('.media-heading').text().split(' | ')[2].split('/month')[0].substring(1));
+        var when = $('#daterange').val();
+        var range = when.split('-');
+        var start = new Date(range[0]).getTime();
+        var end = new Date(range[1]).getTime();
+        var months = (end - start) / (1000 * 60 * 60 * 24 * 30)
+        var calculatedTotal = (price * months).toFixed(2);
+        $(".modal-body #modal-title").html(`${byn.name}<small><br />${byn.location}</small><br/><h6>${byn.type}: ${byn.size} square feet at $${byn.price}/month</h6><h5 id="calc-total" style="color: #ff5e61">Total : $${calculatedTotal}</h5>`);
         if (!byn.end) byn.end = 'open';
         byn.amenities = byn.amenities.join(', ');
         $(".modal-body #modal-desc").html(`<br/><h6 style="display: inline">Description:  </h6>${byn.description}<br/>
@@ -382,13 +436,16 @@
         var indicators = byn.photos.map((item, i) => ((i === 0) ?  `<li data-target="#bynImgCarousel" data-slide-to=${i} class="active"></li>` : `<li data-target="#bynImgCarousel" data-slide-to=${i}></li>`));
         $(".modal-body .carousel-inner").html(photos);
         $(".modal-body .carousel-indicators").html(indicators)
-            //$(".modal-body #message-btn").attr('href', '')
-        $(".modal-body #book-btn").on('click', function() {
-
-        })
+        
+        $('#price-total').text(calculatedTotal);
+        $('#byn-mongo-id').val(id);
+        $('#byn-alg-id').val(algId);
+        $('#start-day').val(start);
+        $('#end-day').val(end);
           }
         });
   });
+
 </script>
 
 </body>

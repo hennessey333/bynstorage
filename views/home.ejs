@@ -90,6 +90,10 @@
                 <div class="intro-heading">A New Way To Store</div>
                 <form class="input-group input-group-lg" style="display: block" action="/search" method="post">
                     <input id="geocomplete" type="text" class="form-control" placeholder="Where?" name="where" aria-describedby="sizing-addon1" style="display: inline-block; width: 35%; margin-left: 15%;">
+                    <div id="geoloc">
+                        <input id="lat" type="hidden" name="lat" value="" />
+                        <input id="lng" type="hidden" name="lng" value="" />
+                    </div>
                     <input id="daterange" type="text" class="form-control customBorderRadius" placeholder="When?" name="when" aria-describedby="sizing-addon1" style="display: inline-block; width: 35%; margin-right: 15%;">
                 <br><br><br><br>
                 <input class="page-scroll btn btn-xl" type="submit" value="Find A Byn"></input>
@@ -259,18 +263,17 @@
 
     <script>
       $(function(){
-
-        console.log('test')
-        
         $("#geocomplete").geocomplete()
           .bind("geocode:result", function(event, result){
-            $.log("Result: " + result.formatted_address);
+            $('#lat').val(result.geometry.location.lat());
+            $('#lng').val(result.geometry.location.lng());
+            // $.log("Result: " + result.formatted_address);
           })
           .bind("geocode:error", function(event, status){
-            $.log("ERROR: " + status);
+            // $.log("ERROR: " + status);
           })
           .bind("geocode:multiple", function(event, results){
-            $.log("Multiple: " + results.length + " results found");
+            // $.log("Multiple: " + results.length + " results found");
           });
 
         $("#find").click(function(){
