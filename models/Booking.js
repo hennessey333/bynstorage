@@ -27,7 +27,8 @@ var bookingSchema = mongoose.Schema({
     end: {
         type: Number,
         required: true
-    }
+    },
+    isConfirmed: Boolean
 });
 
 // create the model for users and expose it to our app

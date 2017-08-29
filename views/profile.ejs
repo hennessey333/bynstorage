@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Byn Storage</title>
+
+    <link rel="icon" href="img/companyLogos/BynLogo2.png">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <!-- Theme CSS -->
+    <link href="css/agency.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js" integrity="sha384-0s5Pv64cNZJieYFkXYOTId2HMA2Lfb6q2nAcx2n0RTLUnCAoTTsS0nKEO27XyKcY" crossorigin="anonymous"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js" integrity="sha384-ZoaMbDF+4LeFxg6WdScQ9nnR1QC2MIRxA1O9KWEXQwns1G8UNyIEZIQidzb0T1fo" crossorigin="anonymous"></script>
+        <![endif]-->
+
+    </head>
+
+    <body>
+
+        <div id="page-top" class="index">
+            <!-- Navigation -->
+            <nav id="mainNavProfilePage" class="navbar navbar-default navbar-custom navbar-fixed-top">
+                <div class="container">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header page-scroll">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                        </button>
+                        <a href="/home">
+                         <img src="img/companyLogos/BynLogo2.png" class="logoimg">
+                        </a>
+                        <!-- <a class="navbar-brand page-scroll" href="#page-top">Byn</a> -->
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="hidden">
+                                <a href="#page-top"></a>
+                            </li>
+                            <li>
+                                <a href="/home" style="color: #ff5e61">Back to Home</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+
+            <div style="padding-top: 110px; position: inline-block;"> </div>
+            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="media">
+                            <div align="center">
+                                <img class="thumbnail img-responsive" src="<%-user.photo%>" width="300px" height="300px">
+                            </div>
+                            <div class="media-body">
+                                <h2 class="panel-title pull-left" style="font-size:30px;"><%-user.local.firstname%> <%-user.local.lastname%></h2>
+                                <br><br><br>
+                                <hr>
+                                <h3><strong>Bio</strong></h3>
+                                <p><%-user.bio%></p>
+                                <hr>
+                                <h3><strong>Email</strong></h3>
+                                <p><%-user.local.email%></p>
+                                <hr>
+                                <h3><strong>Phone</strong></h3>
+                                <p><%-user.phone%></p>
+                                <hr><br>
+                                <center>
+                                    <a href="/signout" class="btn btn-xl">
+                                        <span class="service-heading">Sign Out</span>
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <div class="panel panel-default">
+                <div>
+                    <ul class="nav nav-pills nav-justified profileTabs">
+                        <li role="presentation" class="on backgroundActive"><a href="#">Manage Spaces</a></li>
+                        <li role="presentation" class="on"><a href="/bookings">Manage Bookings</a></li>
+                        <li role="presentation" class="on"><a href="/messages">Messages</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Render all of user's spaces -->
+            <%  var html = '';
+                var items = byns.map((item) => {
+                var photos = item.photos.map((item, i) => ((i === 0) ?  `<div class="item active">
+                                                                        <img style="height: 200px; width: auto;" class="carousel" src=${item} alt="Byn Photo">
+                                                                        </div>` : `<div class="item">
+                                                                        <img style="height: 200px; width: auto;"class="carousel" src=${item} alt="Byn Photo">
+                                                                      </div>`));
+                var indicators = item.photos.map((item, i) => ((i === 0) ?  `<li data-target="#bynImgCarousel" data-slide-to=${i} class="active"></li>` : `<li data-target="#bynImgCarousel" data-slide-to=${i}></li>`));
+                html += `<div class="row col-xs-4" style="border: medium #EEEEEE solid; border-radius: 7px; margin-right: 45px;">
+                                <div style="margin-left: 3%; margin-right: 3%">
+                                    <div>
+                                        <center>
+                                            <h3 style="font-size: 3.0vh">${item.name}<small><br>${item.location}</small></h3>
+                                        </center>
+                                        <hr class="colorgraph">
+                                        
+                                        <div style="height: 200px" id="bynImgCarousel" class="carousel slide" data-ride="carousel">
+                                          <!-- Indicators -->
+                                          <ol class="carousel-indicators" style="bottom: 0 !important;">
+                                            ${indicators}
+                                          </ol>
+
+                                          <!-- Wrapper for slides -->
+                                          <center>
+                                            <div class="carousel-inner">
+                                              ${photos}
+                                          </center>
+
+                                          <!-- Controls -->
+                                          <a class="left carousel-control" href="#bynImgCarousel" role="button" data-slide="prev">
+                                            <span class="glyphicon glyphicon-chevron-left"></span>
+                                          </a>
+                                          <a class="right carousel-control" href="#bynImgCarousel" role="button" data-slide="next">
+                                            <span class="glyphicon glyphicon-chevron-right"></span>
+                                          </a>
+                                        </div> <!-- Carousel -->
+                                        <div style="max-height: 80px; overflow: scroll;">
+                                          <center>
+                                            <h6>${item.description}</h6>
+                                          <center>
+                                        </div>
+                                        <hr class="colorgraph">
+                                        <div class="row">
+                                            <div class="col-xs-6">
+                                                <center>
+                                                    <div>
+                                                        <a class="btn btn-default btn-sign-up btn-block btn-lg" id="edit-byn" style="margin-bottom: 15px;">Edit</a>
+                                                    </div>
+                                                </center>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <center>
+                                                    <div>
+                                                    <a class="btn btn-default btn-sign-up btn-block btn-lg" id="delete-byn" style="margin-bottom: 15px;" data-toggle="modal" data-target="#confirm-delete-modal" data-id="${item._id}">Delete</a></div>
+                                                </center>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`
+                            });%>
+            
+            <div id="byn-container" class="col-xs-12" style="display: flex"> <%- html %> </div>
+
+
+            <div class="modal fade" id="edit-byn-modal" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+              <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <!-- <h4 class="modal-title" id="myModalLabel">Sign Up</h4> -->
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <center><div style="margin-left: 3%; margin-right: 3%">
+                        
+                      </div></center>
+                    </div>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <div class="modal fade" id="confirm-delete-modal" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+              <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <!-- <h4 class="modal-title" id="myModalLabel">Sign Up</h4> -->
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <center><div id="modal-text" style="margin-left: 3%; margin-right: 3%">
+                      </div></center>
+                    </div>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- <footer>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <ul class="list-inline quicklinks">
+                                <li><a href="/FAQ" style="margin-right: 10px">FAQ</a>
+                                </li>
+                                <li><a href="/howtorent" style="margin-right: 10px">How To Rent</a>
+                                </li>
+                                <li><a href="/howtohost" style="margin-right: 10px">How To Host</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-2">
+                            <ul class="list-inline social-buttons">
+                                <li><a href="#"><i class="fa fa-facebook"></i></a>
+                                </li>
+                                <li><a href="#"><i class="fa fa-linkedin"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-5">
+                            <ul class="list-inline quicklinks">
+                                <li><a href="/aboutus" style="margin-right: 10px">About Us</a>
+                                </li>
+                                <li><a href="#" style="margin-right: 10px">Privacy Policy</a>
+                                </li>
+                                <li><a href="#" style="margin-right: 10px">Terms of Use</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <br><br><br>
+                        <div class="col-md-12">
+                            <span class="copyright">Copyright &copy; Byn Storage 2017</span>
+                        </div>
+                    </div>
+                </div>
+            </footer> -->
+
+            <!-- jQuery -->
+            <script src="vendor/jquery/jquery.min.js"></script>
+
+            <!-- Bootstrap Core JavaScript -->
+            <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+            <!-- Plugin JavaScript -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" integrity="sha384-mE6eXfrb8jxl0rzJDBRanYqgBxtJ6Unn4/1F7q4xRRyIw7Vdg9jP4ycT7x1iVsgb" crossorigin="anonymous"></script>
+
+            <!-- Theme JavaScript -->
+            <script src="js/agency.min.js"></script>
+
+            <script type="text/javascript">
+            // $(function() {
+            //     $(".on").click(function() {
+            //         $(this).addClass("backgroundActive");
+            //     });
+            // });
+
+            // $('ul.profileTabs li').click(
+            //     function(e) {
+            //         e.preventDefault(); // prevent the default action
+            //         e.stopPropagation(); // stop the click from bubbling
+            //         $(this).closest('ul').find('.on').removeClass('backgroundActive');
+            //         $(this).parent().addClass('on');
+            // });
+            </script>
+            <script>
+                $(document).on("click", '#delete-byn', function(){
+                    var id = $(this).data('id');
+                    $.ajax({
+                        url: '/bookings/' + id,
+                        method: 'get',
+                        success: function(result) {
+                            if (!result.booked) {
+                                $('#modal-text').html(`<h4> Permanently delete this Byn? </h4><br/>
+                                <form role="form" action="/deleteByn/${id}" method="get">
+                                    <input class="btn btn-xl" type="submit" value="Confirm Delete" />
+                                </form>`);
+                            }
+                            else {
+                                $('#modal-text').html(`<h4> Hold up!</h4><p> This Byn has an existing booking! <br/> Please cancel all current bookings in the Manage Bookings tab before deleting. </p>`);
+                            }
+                         }
+                    });
+                });
+            </script>
+            <script>
+              $(document).on("click", "#edit-byn", function () {
+                $.ajax({
+                  url: '/byn/' + id,
+                  method: 'get',
+                  success: function(result) {
+                    var byn = result.byn;
+                    var price = parseFloat(self.find('.media-heading').text().split(' | ')[2].split('/month')[0].substring(1));
+                    var when = $('#daterange').val();
+                    var range = when.split('-');
+                    var start = new Date(range[0]).getTime();
+                    var end = new Date(range[1]).getTime();
+                    var months = (end - start) / (1000 * 60 * 60 * 24 * 30)
+                    var calculatedTotal = (price * months).toFixed(2);
+                    $(".modal-body #modal-title").html(`${byn.name}<small><br />${byn.location}</small><br/><h6>${byn.type}: ${byn.size} square feet at $${byn.price}/month</h6><h5 id="calc-total" style="color: #ff5e61">Total : $${calculatedTotal}</h5>`);
+                    if (!byn.end) byn.end = 'open';
+                    byn.amenities = byn.amenities.join(', ');
+                    $(".modal-body #modal-desc").html(`<br/><h6 style="display: inline">Description:  </h6>${byn.description}<br/>
+                      <h6 style="display: inline">Amenities:  </h6>${byn.amenities}<br/>
+                      <h6 style="display: inline">Availability:  </h6>${byn.start} — ${byn.end}`);
+                    var photos = byn.photos.map((item, i) => ((i === 0) ?  `<div class="item active">
+                      <img class="carousel" src=${item} alt="Byn Photo">
+                    </div>` : `<div class="item">
+                    <img class="carousel" src=${item} alt="Byn Photo">
+                  </div>`));
+                    var indicators = byn.photos.map((item, i) => ((i === 0) ?  `<li data-target="#bynImgCarousel" data-slide-to=${i} class="active"></li>` : `<li data-target="#bynImgCarousel" data-slide-to=${i}></li>`));
+                    $(".modal-body .carousel-inner").html(photos);
+                    $(".modal-body .carousel-indicators").html(indicators)
+                    
+                    $('#price-total').text(calculatedTotal);
+                    $('#byn-mongo-id').val(id);
+                    $('#byn-alg-id').val(algId);
+                    $('#start-day').val(start);
+                    $('#end-day').val(end);
+                      }
+                    });
+              });
+
+            </script>
+
+        </div>
+    </body>
+
+    </html>

@@ -23,6 +23,7 @@ var userSchema = mongoose.Schema({
          // }
     photo: String,
     bio: String,
+    phone: String,
     // facebook         : {
     //     id           : String,
     //     token        : String,

@@ -51,7 +51,7 @@ module.exports = function(passport) {
             if (err)
                 return done(err);
 
-            console.log('firstname: ' + req.body.firstname)
+            // console.log('firstname: ' + req.body.firstname)
 
             // check to see if theres already a user with that email
             if (user) {
@@ -68,7 +68,21 @@ module.exports = function(passport) {
 
             if (req.body.lastname === '') {
                 return done(null, false, req.flash('signupMessage', 'Please enter a valid last name.'));
+            } 
+
+            if (req.body.phone === '') {
+                return done(null, false, req.flash('signupMessage', 'Please enter a valid phone number. E.g: (555) 555-5555'));
             } else {
+
+                function formatPhoneNumber(s) {
+                  var s2 = (""+s).replace(/\D/g, '');
+                  var m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
+                  return (!m) ? null : "(" + m[1] + ") " + m[2] + "-" + m[3];
+                }
+
+                var phone = formatPhoneNumber(req.body.phone);
+                if (!phone) return done(null, false, req.flash('signupMessage', 'Please enter a valid phone number. E.g: (555) 555-5555'));
+
 
                 // if there is no user with that email and all fields filled
                 // create the user
@@ -79,8 +93,9 @@ module.exports = function(passport) {
                 newUser.local.email      = email;
                 newUser.local.lastname   = req.body.lastname;
                 newUser.local.firstname  = req.body.firstname;
-                newUser.photo = null;
+                newUser.photo = 'https://s3-us-west-1.amazonaws.com/byn-user-images/user.jpg';
                 newUser.bio = null;
+                newUser.phone = phone;
 
                 // save the user
                 newUser.save(function(err) {

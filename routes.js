@@ -17,7 +17,9 @@ var client = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN
 var algoliaHelper = algoliasearchHelper(client, 'byns');
 
 var index = client.initIndex('byns');
-var Byn = require('./models/Byn')
+var Byn = require('./models/Byn');
+var Booking = require('./models/Booking');
+var User = require('./models/user');
 var aws = require('aws-sdk');
 var multer = require('multer');
 var multerS3 = require('multer-s3');
@@ -128,12 +130,35 @@ module.exports = function(app, passport) {
 
   // GET Profile page
   app.get('/profile', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/profile.html'))
+    User.findById(req.user)
+    .then(function(user) {
+      Byn.find({host: req.user}, function(err, byns){
+        if (err) console.log("Error", err);
+        else {
+          res.render('profile.ejs', {user, byns});                                
+        }
+      })
+    })
+    .catch(function(err){
+      console.log("Error", err);
+    })
+    //res.sendFile(path.join(__dirname, 'public/profile.html'))
   });
 
   // GET Bookings page
   app.get('/bookings', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/bookings.html'))
+    Booking.find({client: req.user}, function(err, clientBookings){
+      if (err) console.log("Error", err);
+      else {
+        Booking.find({host: req.user}, function(err, hostBookings){
+          if (err) console.log("Error", err);
+          else {
+            res.render('bookings.ejs', {clientBookings, hostBookings});       
+          }
+        });
+      }
+    });
+   // res.sendFile(path.join(__dirname, 'public/bookings.html'))
   });
 
   // POST Bookings: Make new booking
@@ -181,6 +206,7 @@ module.exports = function(app, passport) {
       notes: req.body.deliveryNotes,
       start: req.body.start,
       end: req.body.end,
+      isConfirmed: false
     }).save())
     .catch(function(err) {
       console.log("Caught error", err);
@@ -342,6 +368,36 @@ module.exports = function(app, passport) {
     });
   });
 
+  // Check if given byn id is associated with any bookings
+  app.get('/bookings/:id', function(req, res){
+    var id = req.params.id;
+    Booking.find({byn: id}, function(err, bookings){
+      if (err) {
+        console.log("Error", err);
+        res.end();
+      }
+      res.json({booked: bookings.length > 0})
+    })
+  });
+
+  // Delete a byn
+  app.get('/deleteByn/:id', function(req, res){
+    var id = req.params.id;
+    Byn.findByIdAndRemove(id)
+    .then(function(byn){
+      index.deleteByQuery('bynref', {filters: `bynref: ${id}`});
+    })
+    .catch(function(err) {
+      if (err) {
+        console.log("Error", err);
+        res.end();
+      }
+      else {
+        res.redirect('/profile');
+      }
+    });
+  })
+
   // // POST home page to search page
   // app.post('/search', function(req, res) {
   //   req.checkBody('where', 'A location is required.').notEmpty();
@@ -371,7 +427,7 @@ module.exports = function(app, passport) {
   // =====================================
   // LOGOUT ==============================
   // =====================================
-  app.get('/logout', function(req, res) {
+  app.get('/signout', function(req, res) {
     req.logout();
     res.redirect('/');
   });
@@ -392,7 +448,6 @@ module.exports = function(app, passport) {
       res.redirect('/home')
     })
   });
-
 }
 
 // route middleware to make sure a user is logged in
