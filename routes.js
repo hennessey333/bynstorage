@@ -24,6 +24,8 @@ var aws = require('aws-sdk');
 var multer = require('multer');
 var multerS3 = require('multer-s3');
 var S3_BUCKET = process.env.AWS_BUCKET;
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 var s3 = new aws.S3();
 var upload = multer({
@@ -147,24 +149,44 @@ module.exports = function(app, passport) {
 
   // GET Bookings page
   app.get('/bookings', function(req, res) {
-    Booking.find({client: req.user}, function(err, clientBookings){
-      if (err) console.log("Error", err);
-      else {
-        Booking.find({host: req.user}, function(err, hostBookings){
-          if (err) console.log("Error", err);
-          else {
-            res.render('bookings.ejs', {clientBookings, hostBookings});       
-          }
-        });
-      }
-    });
+    User.findById(req.user)
+    .then(function(user) {
+      Booking.find({host: req.user}).populate('byn').exec(function(err, bookings){
+        if (err) console.log("Error", err);
+        else {
+          console.log("hostbookings", bookings)
+          res.render('bookings.ejs', {user, bookings, host: true});       
+        }
+      });
+    })
+    .catch(function(err){
+      console.log("Error", err);
+    })
+   // res.sendFile(path.join(__dirname, 'public/bookings.html'))
+  });
+
+  app.get('/booked', function(req, res) {
+    User.findById(req.user)
+    .then(function(user) {
+      Booking.find({client: req.user}).populate('byn').exec(function(err, bookings){
+        if (err) console.log("Error", err);
+        else {
+          console.log("user", user)
+          console.log("clibookings", bookings)
+          res.render('bookings.ejs', {user, bookings, host: false});       
+        }
+      });
+    })
+    .catch(function(err){
+      console.log("Error", err);
+    })
    // res.sendFile(path.join(__dirname, 'public/bookings.html'))
   });
 
   // POST Bookings: Make new booking
   app.post('/bookings', function(req, res) {
-    var startMs = req.body.start;
-    var endMs = req.body.end;
+    var startMs = parseInt(req.body.start);
+    var endMs = parseInt(req.body.end);
     var startNext = startMs + (24 * 60 * 60 * 1000);
     var endNext = endMs + (24 * 60 * 60 * 1000);
     // var startDate = new Date(startMs);
@@ -249,9 +271,48 @@ module.exports = function(app, passport) {
           console.log("Uh-oh - algolia object not found?")
         }
       }
-    })
+    });
 
-    res.redirect('/bookings');
+    User.findById(req.user, function(err, user) {
+      if (err) {
+        console.log("Error", err);
+        res.end();
+      }
+      else {
+        // using SendGrid's v3 Node.js Library
+        // https://github.com/sendgrid/sendgrid-nodejs
+        const msg = {
+          to: user.local.email,
+          from: 'info@bynstorage.com',
+          subject: 'Thanks for Booking With Byn!',
+          text: 'We are confirming your booking with your host, and will follow up with final confirmation details shortly. Have a great day!',
+         // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+        };
+        sgMail.send(msg);
+      }
+    })
+    .then(function() {
+      if (!host) res.redirect('/bookings');
+      User.findById(host, function(err, user) {
+        if (err) {
+          console.log("Error", err);
+          res.end();
+        }
+        else {
+          // using SendGrid's v3 Node.js Library
+          // https://github.com/sendgrid/sendgrid-nodejs
+          const msg = {
+            to: user.local.email,
+            from: 'info@bynstorage.com',
+            subject: 'Your Byn Has Been Booked!',
+            text: 'Good news! One of your byns has a new booking. Log in to your profile to view the details and confirm. Have a great day!',
+           // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+          };
+          sgMail.send(msg);
+          res.redirect('/bookings');
+        }
+      })
+    })
     //res.sendFile(path.join(__dirname, 'public/bookings.html'))
   });
 
@@ -285,7 +346,7 @@ module.exports = function(app, passport) {
       });
   });
 
-  app.post('/host2', upload.array('photos'), function(req, res) {
+  app.post('/host2', upload.any(), function(req, res) {
     console.log("req.body", req.body)
     console.log("req.files", req.files);
     if (req.body.endAvailabilityRadio === 'Yes') {
@@ -313,6 +374,8 @@ module.exports = function(app, passport) {
       name: req.body.name,
       description: req.body.description,
       amenities: req.body.amenities,
+      length: req.body.size1,
+      width: req.body.size2,
       size: size,
       price: price,
       times: [{start, end}],
@@ -339,7 +402,7 @@ module.exports = function(app, passport) {
           price: price,
           start: start,
           end: end,
-          photos: photos,
+          photos: photos[0],
           host: req.user,
           bynref: byn._id
         }, byn._id, function(err, content) {

@@ -67,47 +67,123 @@
             </nav>
 
             <div style="padding-top: 110px; position: inline-block;"> </div>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div class="media">
-                            <div align="center">
-                                <img class="thumbnail img-responsive" src="img/icons/user.jpg" width="300px" height="300px">
-                            </div>
-                            <div class="media-body">
-                                <h2 class="panel-title pull-left" style="font-size:30px;">Patrick Hennessey</h2>
-                                <br><br><br>
-                                <hr>
-                                <h3><strong>Bio</strong></h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel gravida metus, non ultrices sapien. Morbi odio metus, dapibus non nibh id amet.</p>
-                                <hr>
-                                <h3><strong>Email</strong></h3>
-                                <p>email@email.com</p>
-                                <hr>
-                                <h3><strong>Phone</strong></h3>
-                                <p>(555) 555-5555</p>
-                                <hr><br>
-                                <center>
-                                    <a href="/signout" class="btn btn-xl">
-                                        <span class="service-heading">Sign Out</span>
-                                    </a>
-                                </center>
+                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="media">
+                                        <div align="center">
+                                            <img class="thumbnail img-responsive" src="<%-user.photo%>" width="300px" height="300px">
+                                        </div>
+                                        <div class="media-body">
+                                            <h2 class="panel-title pull-left" style="font-size:30px;"><%-user.local.firstname%> <%-user.local.lastname%></h2>
+                                            <br><br><br>
+                                            <hr>
+                                            <h3><strong>Bio</strong></h3>
+                                            <p><%-user.bio%></p>
+                                            <hr>
+                                            <h3><strong>Email</strong></h3>
+                                            <p><%-user.local.email%></p>
+                                            <hr>
+                                            <h3><strong>Phone</strong></h3>
+                                            <p><%-user.phone%></p>
+                                            <hr><br>
+                                            <center>
+                                                <a href="/signout" class="btn btn-xl">
+                                                    <span class="service-heading">Sign Out</span>
+                                                </a>
+                                            </center>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
             <div class="panel panel-default">
                 <div>
                     <ul class="nav nav-pills nav-justified profileTabs">
                         <li role="presentation" class="on"><a href="/profile">Manage Spaces</a></li>
-                        <li role="presentation" class="on backgroundActive"><a href="#">Manage Bookings</a></li>
-                        <li role="presentation" class="on"><a href="/messages">Messages</a></li>
+                        <%- (host) ? `<li id="host" role="presentation" class="on backgroundActive"><a href="#">Manage Bookings</a></li>
+                        <li id="client" role="presentation" class="on"><a href="/booked">My Bookings</a></li>` :
+                        `<li id="host" role="presentation" class="on"><a href="/bookings">Manage Bookings</a></li>
+                        <li id="client" role="presentation" class="on backgroundActive"><a href="#">My Bookings</a></li>` %>
+                        <li role="presentation" class="on"><a href="/messages">All Messages</a></li>
                     </ul>
                 </div>
             </div>
+
+            <!-- Render all bookings -->
+            <%  var html = '';
+                if (bookings.length === 0) html = '<p style="margin-top: 200px; text-align: center; color: grey"> No bookings to show!</p>'
+                var items = bookings.map((booking) => {
+                var item = booking.byn;
+                var startDate = new Date(booking.start).toLocaleDateString();
+                var endDate = new Date(booking.end).toLocaleDateString();
+                var photos = item.photos.map((item, i) => ((i === 0) ?  `<div class="item active">
+                                                                        <img style="height: 200px; width: auto;" class="carousel" src=${item} alt="Byn Photo">
+                                                                        </div>` : `<div class="item">
+                                                                        <img style="height: 200px; width: auto;"class="carousel" src=${item} alt="Byn Photo">
+                                                                      </div>`));
+                var indicators = item.photos.map((item, i) => ((i === 0) ?  `<li data-target="#bynImgCarousel" data-slide-to=${i} class="active"></li>` : `<li data-target="#bynImgCarousel" data-slide-to=${i}></li>`));
+                html += `<div class="row col-xs-4" style="height: 25%; border: medium #EEEEEE solid; border-radius: 7px; margin: 0px 35px 25px 35px;">
+                                <div style="margin-left: 3%; margin-right: 3%">
+                                    <div>
+                                        <center>
+                                        <div style="height: 60px; overflow: hidden">
+                                            <h3 style="font-size: 2.5vh">${item.name}<small><br>${item.location}</small></h3>
+                                        </div>
+                                        </center>
+                                        <hr class="colorgraph">
+                                        
+                                        <div style="height: 200px" id="bynImgCarousel" class="carousel slide" data-ride="carousel">
+                                          <!-- Indicators -->
+                                          <ol class="carousel-indicators" style="bottom: 0 !important;">
+                                            ${indicators}
+                                          </ol>
+
+                                          <!-- Wrapper for slides -->
+                                          <center>
+                                            <div class="carousel-inner">
+                                              ${photos}
+                                          </center>
+
+                                          <!-- Controls -->
+                                          <a class="left carousel-control" href="#bynImgCarousel" role="button" data-slide="prev">
+                                            <span class="glyphicon glyphicon-chevron-left"></span>
+                                          </a>
+                                          <a class="right carousel-control" href="#bynImgCarousel" role="button" data-slide="next">
+                                            <span class="glyphicon glyphicon-chevron-right"></span>
+                                          </a>
+                                        </div> <!-- Carousel -->
+                                        <div style="max-height: 110px; overflow: scroll;">
+                                          <center>
+                                            <h6 style="display:inline">Dates:</h6><p style="display:inline"> ${startDate} - ${endDate}</p><br/>
+                                            <h6 style="display:inline"> Move-in: </h6><p style="display:inline">${booking.movein}</p><br/><br/>
+                                            <h6 style="display:inline"> Special Notes: </h6><p> ${booking.notes}</p>
+                                          <center>
+                                        </div>
+                                        <hr class="colorgraph">
+                                        <div class="row">
+                                            <div class="col-xs-6">
+                                                <center>
+                                                    <div>
+                                                        <a class="btn btn-default btn-sign-up btn-block btn-lg" id="edit-byn" style="min-width: 50px; margin-bottom: 15px;" data-toggle="modal" data-target="#edit-byn-modal" data-id="${item._id}">Message</a>
+                                                    </div>
+                                                </center>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <center>
+                                                    <div>
+                                                    <a class="btn btn-default btn-sign-up btn-block btn-lg" id="delete-byn" style="min-width: 100px; margin-bottom: 15px;" data-toggle="modal" data-target="#confirm-delete-modal" data-id="${item._id}">Cancel</a></div>
+                                                </center>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`
+                            }) %>
+            
+            <div id="byn-container" class="col-xs-12"> <%- html %> </div>
 
             <!-- <footer>
                 <div class="container">

@@ -190,9 +190,9 @@
                         <label for="size1" style="margin-right: 32px;">Length</label>
                         <label for="size2" style="margin-left: 32px; margin-right: 5px">Width</label>
                         <br>              
-                        <input class="form-control sqFtCalc" type="number" min="0" id="size1" data-bind="value:size1"/>
+                        <input class="form-control sqFtCalc" type="number" min="0" id="size1" name="size1" data-bind="value:size1"/>
                         <p style="display: inline-block; margin-left: 10px; margin-right: 10px;"> X </p>  
-                        <input class="form-control sqFtCalc" type="number" min="0" id="size2" data-bind="value:size2"/>
+                        <input class="form-control sqFtCalc" type="number" min="0" id="size2" name="size2" data-bind="value:size2"/>
                         <br><br>
                         <label for="sizeTotal">Square Feet:</label>
                         <br>
@@ -223,7 +223,7 @@
                         Byn's Suggested Pricing Model:
                         <span id="suggestedPricePerSqFt" type="text"> </span> per square foot per month
                         <br><br>
-                        <h4>Set Your Byn's Monthly Rate Per Square Foot</h4>
+                        <h4>Set Your Byn's Monthly Rate</h4>
                         $ <input class="form-control priceCalc" name="price" type="number" min="1" step="any"/>
                         <br><br>
                         Your custom price was calculated based on your Byn size and ammenities.
@@ -256,7 +256,7 @@
                         <label class="control-label">Choose File(s)</label>
                         <br>
                         <label class="btn btn-default btn-lg">
-                            Browse <input type="file" id="files" class="hidden" name="photos" accept="image/*" multiple>
+                            Browse <input type="file" id="files" class="hidden" name="photos" accept="image/*" multiple="multiple">
                         </label>
                         <output id="photoList"></output>
                         <br>
@@ -579,29 +579,29 @@
 
     <!-- Profile Photo Upload -->
     <script>
-    function handleFileSelect(evt) {
-        var files = evt.target.files; // FileList object
-        // Loop through the FileList and render image files as thumbnails.
-        for (var i = 0, f; f = files[i]; i++) {
-            // Only process image files.
-            if (!f.type.match('image.*')) {
-                continue;
-            }
-            var reader = new FileReader();
-            // Closure to capture the file information.
-            reader.onload = (function(theFile) {
-                return function(e) {
-                      // Render thumbnail.
-                      var span = document.createElement('span');
-                      span.innerHTML = ['<img class="thumb" src="', e.target.result,
-                      '" title="', escape(theFile.name), '"/>'].join('');
-                      document.getElementById('photoList2').insertBefore(span, null);
-                };
-            })(f);
-            // Read in the image file as a data URL.
-            reader.readAsDataURL(f);
-        }
-    }
+    // function handleFileSelect(evt) {
+    //     var files = evt.target.files; // FileList object
+    //     // Loop through the FileList and render image files as thumbnails.
+    //     for (var i = 0, f; f = files[i]; i++) {
+    //         // Only process image files.
+    //         if (!f.type.match('image.*')) {
+    //             continue;
+    //         }
+    //         var reader = new FileReader();
+    //         // Closure to capture the file information.
+    //         reader.onload = (function(theFile) {
+    //             return function(e) {
+    //                   // Render thumbnail.
+    //                   var span = document.createElement('span');
+    //                   span.innerHTML = ['<img class="thumb" src="', e.target.result,
+    //                   '" title="', escape(theFile.name), '"/>'].join('');
+    //                   document.getElementById('photoList2').insertBefore(span, null);
+    //             };
+    //         })(f);
+    //         // Read in the image file as a data URL.
+    //         reader.readAsDataURL(f);
+    //     }
+    // }
     // function uploadFile(file, signedRequest, url){
     //   const xhr = new XMLHttpRequest();
     //   xhr.open('PUT', signedRequest);
@@ -614,8 +614,8 @@
     //     }
     //   };
     //   xhr.send(file);
-    // }
-    document.getElementById('files2').addEventListener('change', handleFileSelect, false);
+    // // }
+    // document.getElementById('files2').addEventListener('change', handleFileSelect, false);
     </script>
 
     <!-- Geocomplete -->

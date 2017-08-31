@@ -19,6 +19,14 @@ var bynSchema = mongoose.Schema({
     name: String,
     description: String,
     amenities: Array,
+    length: {
+        type: Number,
+        required: true
+    },
+    width: {
+        type: Number,
+        required: true
+    },
     size: {
         type: Number,
         required: true

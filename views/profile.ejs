@@ -106,7 +106,8 @@
                     <ul class="nav nav-pills nav-justified profileTabs">
                         <li role="presentation" class="on backgroundActive"><a href="#">Manage Spaces</a></li>
                         <li role="presentation" class="on"><a href="/bookings">Manage Bookings</a></li>
-                        <li role="presentation" class="on"><a href="/messages">Messages</a></li>
+                        <li role="presentation" class="on"><a href="/booked">My Bookings</a></li>
+                        <li role="presentation" class="on"><a href="/messages">All Messages</a></li>
                     </ul>
                 </div>
             </div>
@@ -119,11 +120,13 @@
                                                                         <img style="height: 200px; width: auto;"class="carousel" src=${item} alt="Byn Photo">
                                                                       </div>`));
                 var indicators = item.photos.map((item, i) => ((i === 0) ?  `<li data-target="#bynImgCarousel" data-slide-to=${i} class="active"></li>` : `<li data-target="#bynImgCarousel" data-slide-to=${i}></li>`));
-                html += `<div class="row col-xs-4" style="border: medium #EEEEEE solid; border-radius: 7px; margin-right: 45px;">
+                html += `<div class="row col-xs-3" style="height: 25%; border: medium #EEEEEE solid; border-radius: 7px; margin: 0px 35px 25px 35px;">
                                 <div style="margin-left: 3%; margin-right: 3%">
                                     <div>
                                         <center>
-                                            <h3 style="font-size: 3.0vh">${item.name}<small><br>${item.location}</small></h3>
+                                        <div style="height: 80px; overflow: hidden">
+                                            <h3 style="font-size: 2.5vh">${item.name}<small><br>${item.location}</small></h3>
+                                        </div>
                                         </center>
                                         <hr class="colorgraph">
                                         
@@ -147,7 +150,7 @@
                                             <span class="glyphicon glyphicon-chevron-right"></span>
                                           </a>
                                         </div> <!-- Carousel -->
-                                        <div style="max-height: 80px; overflow: scroll;">
+                                        <div style="max-height: 60px; overflow: scroll;">
                                           <center>
                                             <h6>${item.description}</h6>
                                           <center>
@@ -157,14 +160,14 @@
                                             <div class="col-xs-6">
                                                 <center>
                                                     <div>
-                                                        <a class="btn btn-default btn-sign-up btn-block btn-lg" id="edit-byn" style="margin-bottom: 15px;">Edit</a>
+                                                        <a class="btn btn-default btn-sign-up btn-block btn-lg" id="edit-byn" style="min-width: 50px; margin-bottom: 15px;" data-toggle="modal" data-target="#edit-byn-modal" data-id="${item._id}">Edit</a>
                                                     </div>
                                                 </center>
                                             </div>
                                             <div class="col-xs-6">
                                                 <center>
                                                     <div>
-                                                    <a class="btn btn-default btn-sign-up btn-block btn-lg" id="delete-byn" style="margin-bottom: 15px;" data-toggle="modal" data-target="#confirm-delete-modal" data-id="${item._id}">Delete</a></div>
+                                                    <a class="btn btn-default btn-sign-up btn-block btn-lg" id="delete-byn" style="min-width: 100px; margin-bottom: 15px;" data-toggle="modal" data-target="#confirm-delete-modal" data-id="${item._id}">Delete</a></div>
                                                 </center>
                                             </div>
                                         </div>
@@ -173,7 +176,7 @@
                             </div>`
                             });%>
             
-            <div id="byn-container" class="col-xs-12" style="display: flex"> <%- html %> </div>
+            <div id="byn-container" class="col-xs-12"> <%- html %> </div>
 
 
             <div class="modal fade" id="edit-byn-modal" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
@@ -181,12 +184,88 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <!-- <h4 class="modal-title" id="myModalLabel">Sign Up</h4> -->
+                    <h3 class="modal-title" id="myModalLabel" style="text-align: center">Editing This Byn...</h3>
                   </div>
                   <div class="modal-body">
                     <div class="row">
                       <center><div style="margin-left: 3%; margin-right: 3%">
-                        
+                        <form role="form" method="post" action="/update">
+                            <div class="form-group">
+                                <label for="geocomplete">Location: </label>
+                                <input id="geocomplete" type="text" class="form-control input-md" name="location" value="Byn Location">
+                                <div id="geoloc">
+                                    <input id="lat" type="hidden" name="lat" value="" />
+                                    <input id="lng" type="hidden" name="lng" value="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="type">Type: </label>
+                                <label class="radio-inline"><input id="Garage" type="radio" name="type" value="Garage">Garage</label>
+                                <label class="radio-inline"><input id="Closet" type="radio" name="type" value="Closet">Closet</label>
+                                <label class="radio-inline"><input id="Basement" type="radio" name="type" value="Basement">Basement</label>
+                                <label class="radio-inline"><input id="Bedroom" type="radio" name="type" value="Bedroom">Bedroom</label>
+                                <label class="radio-inline"><input id="Business" type="radio" name="type" value="Business">Business</label>
+                                <label class="radio-inline"><input id="Attic" type="radio" name="type" value="Attic">Attic</label>
+                                <label class="radio-inline"><input id="Other" type="radio" name="type" value="Other">Other</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Name: </label>
+                                <input id="name" type="text" class="form-control input-md" name="name" value="Byn Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="decription">Description: </label>
+                                <textarea class="form-control" rows="4" id="description" name="description">Description</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="amenities"> Amenities: </label>
+                                <label class="checkbox-inline"><input type="checkbox" id="24-HourAccess" name="amenities" value="24-Hour Access"/>24-Hour Access</label>
+                                <label class="checkbox-inline"><input type="checkbox" id="ClimateControlled" name="amenities" value="Climate Controlled"/>Climate Controlled</label>
+                                <label class="checkbox-inline"><input type="checkbox" id="VideoSurveillance" name="amenities" value="Video Surveillance"/>Video Surveillance</label>
+                                <label class="checkbox-inline"><input type="checkbox" id="AssistedMove-In" name="amenities" value="Assisted Move-In"/>Assisted Move-In</label>
+                            </div>
+                            <div class="form-group">
+                                <p>Byn Availability Open-Ended: </p>
+                                <label class="radio-inline"><input id="Yes" type="radio" name="endAvailabilityRadio" value="Yes">Yes</label>
+                                <label class="radio-inline"><input id="No" type="radio" name="endAvailabilityRadio" value="No">No</label>
+                                <br>
+                                <label class="control-label" id="dateRangeFull">
+                                    <br><br>
+                                    Choose Date Range
+                                    <br><br>
+                                    <label class="btn btn-default btn-xl">
+                                        <input id="daterange" inline="true" value="" type="text" class="form-control" placeholder="When?" name="when" aria-describedby="sizing-addon1" style="display: inline-block; width: 91%; text-align: center;">
+                                    </label>
+                                </label>
+                                <label class="control-label" id="dateRangeStart">
+                                    <br><br>
+                                    Choose Start Date
+                                    <br><br>
+                                    <label class="btn btn-default btn-xl">
+                                        <input name="dateStart" value="" type="text" class="form-control" placeholder="When?" aria-describedby="sizing-addon1" style="display: inline-block; width: 91%; text-align: center;">
+                                    </label>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="length"> Length (feet): </label>
+                                <input id="length" type="number" class="form-control input-md" name="length" placeholder="  e.g.   10" >
+                                <label for="width"> Width (feet): </label>
+                                <input id="width" type="number" class="form-control input-md" name="width" placeholder="  e.g.   10">
+                                <input type="hidden" id="size" name="size" value = "" />
+                            </div>
+                            <div class="form-group">
+                                <label for="price"> Price (monthly): </label>
+                                <input id="price" type="number" class="form-control input-md" name="price" placeholder="  e.g.   5.50" />
+                            </div>
+                            <div class="form-group">
+                                <label>Photos: </label>
+                                <label class="control-label">Choose File(s)</label>
+                                <br>
+                                <label class="btn btn-default btn-lg">
+                                    Browse <input type="file" id="files" class="hidden" name="photos" accept="image/*" multiple>
+                                </label>
+                                <output id="photoList"></output>
+                            </div>
+                        </form>
                       </div></center>
                     </div>
                   </div>
@@ -291,51 +370,155 @@
                                 </form>`);
                             }
                             else {
-                                $('#modal-text').html(`<h4> Hold up!</h4><p> This Byn has an existing booking! <br/> Please cancel all current bookings in the Manage Bookings tab before deleting. </p>`);
+                                $('#modal-text').html(`<h4> Hold up!</h4><p> This Byn has existing booking(s). <br/> Please cancel all current bookings in the Manage Bookings tab before deleting. </p>`);
                             }
                          }
                     });
                 });
             </script>
+
+            <!-- Geocomplete -->
+            <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCinPgLpBRlw5s2-NoI8s5cgyEMR30mkcU&libraries=places"></script>
+            <!-- script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script> -->
+            <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> -->
+
+            <script src="./js/jquery.geocomplete.js"></script>
+
+            <!-- Moment JS for Date Range Picker -->
+            <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+            <!-- Include Date Range Picker -->
+            <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+            <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+
             <script>
               $(document).on("click", "#edit-byn", function () {
+                var id = $(this).data('id'); 
                 $.ajax({
                   url: '/byn/' + id,
                   method: 'get',
                   success: function(result) {
                     var byn = result.byn;
-                    var price = parseFloat(self.find('.media-heading').text().split(' | ')[2].split('/month')[0].substring(1));
-                    var when = $('#daterange').val();
-                    var range = when.split('-');
-                    var start = new Date(range[0]).getTime();
-                    var end = new Date(range[1]).getTime();
-                    var months = (end - start) / (1000 * 60 * 60 * 24 * 30)
-                    var calculatedTotal = (price * months).toFixed(2);
-                    $(".modal-body #modal-title").html(`${byn.name}<small><br />${byn.location}</small><br/><h6>${byn.type}: ${byn.size} square feet at $${byn.price}/month</h6><h5 id="calc-total" style="color: #ff5e61">Total : $${calculatedTotal}</h5>`);
-                    if (!byn.end) byn.end = 'open';
-                    byn.amenities = byn.amenities.join(', ');
-                    $(".modal-body #modal-desc").html(`<br/><h6 style="display: inline">Description:  </h6>${byn.description}<br/>
-                      <h6 style="display: inline">Amenities:  </h6>${byn.amenities}<br/>
-                      <h6 style="display: inline">Availability:  </h6>${byn.start} — ${byn.end}`);
-                    var photos = byn.photos.map((item, i) => ((i === 0) ?  `<div class="item active">
-                      <img class="carousel" src=${item} alt="Byn Photo">
-                    </div>` : `<div class="item">
-                    <img class="carousel" src=${item} alt="Byn Photo">
-                  </div>`));
-                    var indicators = byn.photos.map((item, i) => ((i === 0) ?  `<li data-target="#bynImgCarousel" data-slide-to=${i} class="active"></li>` : `<li data-target="#bynImgCarousel" data-slide-to=${i}></li>`));
-                    $(".modal-body .carousel-inner").html(photos);
-                    $(".modal-body .carousel-indicators").html(indicators)
-                    
-                    $('#price-total').text(calculatedTotal);
-                    $('#byn-mongo-id').val(id);
-                    $('#byn-alg-id').val(algId);
-                    $('#start-day').val(start);
-                    $('#end-day').val(end);
+
+                    // Populate the form with current byn info
+                    $("#geocomplete").val(byn.location);
+                    $("#name").val(byn.name);
+                    $("#price").val(byn.price);
+                    $("#description").val(byn.description);
+                    for (var i in byn.amenities) {
+                        var inputId = '#' + byn.amenities[i].split(' ').join('');
+                        $(inputId).attr('checked', true);
                       }
+                    $('#' + byn.type).attr('checked', true);
+                    if (byn.end === 2.2e+14) $('#Yes').attr('checked', true);
+                    else $('#No').attr('checked', true);
+                    }
+                    })
+
+
+                // <!-- Image Upload -->
+                function handleFileSelect(evt) {
+                    var files = evt.target.files; // FileList object
+                    // Loop through the FileList and render image files as thumbnails.
+                    for (var i = 0, f; f = files[i]; i++) {
+                        // Only process image files.
+                        if (!f.type.match('image.*')) {
+                            continue;
+                        }
+                        var reader = new FileReader();
+                        // Closure to capture the file information.
+                        reader.onload = (function(theFile) {
+                            return function(e) {
+                                  // Render thumbnail.
+                                  var span = document.createElement('span');
+                                  span.innerHTML = ['<img class="thumb" src="', e.target.result,
+                                  '" title="', escape(theFile.name), '"/>'].join('');
+                                  document.getElementById('photoList').insertBefore(span, null);
+                            };
+                        })(f);
+                        // Read in the image file as a data URL.
+                        reader.readAsDataURL(f);
+                        // const xhr = new XMLHttpRequest();
+                        // xhr.open('GET', `/sign-s3?file-name=${f.name}&file-type=${f.type}`);
+                        // xhr.onreadystatechange = () => {
+                        //     if(xhr.readyState === 4){
+                        //         if(xhr.status === 200){
+                        //             const response = JSON.parse(xhr.responseText);
+                        //             uploadFile(f, response.signedRequest, response.url);
+                        //         }
+                        //         else{
+                        //             alert('Could not get signed URL.');
+                        //         }
+                        //     }
+                        //   };
+                        //   xhr.send();
+                    }
+                }
+                document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+                // Date Range Picker
+                $(function() {
+
+                    $("#daterange").daterangepicker({
+                      autoUpdateInput: false,
+                      locale: {
+                          cancelLabel: 'Clear'
+                      },
+                      applyClass: 'btn-default',
+                      opens: 'center'
+                  });
+
+                  $("#daterange").on('apply.daterangepicker', function(ev, picker) {
+                      $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+                  });
+
+                  $("#daterange").on('cancel.daterangepicker', function(ev, picker) {
+                      $(this).val('');
+                  });
+
+                });
+
+                // Single Date Picker
+                $(function() {
+                    $('input[name="dateStart"]').daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true
+                    })
+                });
+
+                // AutoFill Location
+                $(function(){
+                  
+                  $("#geocomplete").geocomplete()
+                    .bind("geocode:result", function(event, result){
+                      $('#lat').val(result.geometry.location.lat());
+                      $('#lng').val(result.geometry.location.lng());
+                      //$.log("Result: " + result.formatted_address);
+                    })
+                    .bind("geocode:error", function(event, status){
+                      //$.log("ERROR: " + status);
+                    })
+                    .bind("geocode:multiple", function(event, results){
+                      //$.log("Multiple: " + results.length + " results found");
                     });
-              });
+                  
+                  $("#find").click(function(){
+                    $("#geocomplete").trigger("geocode");
+                  });
+                  
+                  $("#examples a").click(function(){
+                    $("#geocomplete").val($(this).text()).trigger("geocode");
+                    return false;
+                  });
+                  
+                });
+              
+              })
 
             </script>
+
+           
 
         </div>
     </body>

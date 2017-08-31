@@ -71,11 +71,11 @@ search.addWidget(
 var hitTemplate =
 '<div class="hit col-sm-3">' +
 '<a id="modal-wrapper" href="#" data-id="{{objectID}}" data-bynref="{{bynref}}" data-toggle="modal" data-target="#targetBynModal" style="text-decoration: none; color: black"><div class="pictures-wrapper" onmouseover=highlightMarker(this) onmouseout=highlightMarker(this)>' +
-'<img class="picture" style="width: 150px; height: 150px" src="{{photos}}" />' +
+'<img class="picture" style="border: 3px solid #b9b9b9; border-radius: 7px; width: 150px; height: 150px" src="{{photos}}" />' +
 /*'<img class="profile" src="{{user.user.thumbnail_url}}" />' +*/
 '</div>' +
 '<div class="infos" style="padding-top: 5px">' +
-'<h6 class="media-heading" style="text-align: center">{{type}} | {{size}} sqft | ${{price}}/month</h6>' +
+'<h6 class="media-heading" style="text-align: center; color: #696969">{{type}} | {{size}} sqft | ${{price}}/month</h6>' +
 '</div></a>' +
 '</div>';
 

@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@appbaseio/reactivemaps": "^1.0.0-beta01",
+    "@sendgrid/mail": "^6.0.0",
     "@types/algoliasearch": "^3.18.2",
     "algoliasearch": "^3.24.3",
     "aws-sdk": "^2.98.0",
