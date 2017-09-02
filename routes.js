@@ -219,17 +219,27 @@ module.exports = function(app, passport) {
           break;
         }
       }
+      new Booking({
+            host: host,
+            client: req.user,
+            byn: req.body.mongoId,
+            movein: req.body.deliveryTime,
+            notes: req.body.deliveryNotes,
+            start: req.body.start,
+            end: req.body.end,
+            isConfirmed: false
+          }).save()
     })
-    .then(new Booking({
-      host: host,
-      client: req.user,
-      byn: req.body.mongoId,
-      movein: req.body.deliveryTime,
-      notes: req.body.deliveryNotes,
-      start: req.body.start,
-      end: req.body.end,
-      isConfirmed: false
-    }).save())
+    // .then(new Booking({
+    //   host: host,
+    //   client: req.user,
+    //   byn: req.body.mongoId,
+    //   movein: req.body.deliveryTime,
+    //   notes: req.body.deliveryNotes,
+    //   start: req.body.start,
+    //   end: req.body.end,
+    //   isConfirmed: false
+    // }).save())
     .catch(function(err) {
       console.log("Caught error", err);
     })
@@ -270,49 +280,49 @@ module.exports = function(app, passport) {
         else {
           console.log("Uh-oh - algolia object not found?")
         }
+        User.findById(req.user, function(err, user) {
+          if (err) {
+            console.log("Error", err);
+            res.end();
+          }
+          else {
+            // using SendGrid's v3 Node.js Library
+            // https://github.com/sendgrid/sendgrid-nodejs
+            const msg = {
+              to: user.local.email,
+              from: 'info@bynstorage.com',
+              subject: 'Thanks for Booking With Byn!',
+              text: 'We are confirming your booking with your host, and will follow up with final confirmation details shortly. Have a great day!',
+             // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+            };
+            sgMail.send(msg);
+          }
+        })
+        .then(function() {
+          User.findById(byn.host, function(err, user) {
+            if (err) {
+              console.log("Error", err);
+              res.end();
+            }
+            else {
+              // using SendGrid's v3 Node.js Library
+              // https://github.com/sendgrid/sendgrid-nodejs
+              const msg = {
+                to: user.local.email,
+                from: 'info@bynstorage.com',
+                subject: 'Your Byn Has Been Booked!',
+                text: 'Good news! One of your byns has a new booking. Log in to your profile to view the details and confirm. Have a great day!',
+               // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+              };
+              sgMail.send(msg);
+              res.redirect('/bookings');
+            }
+          })
+        })
+
       }
     });
 
-    User.findById(req.user, function(err, user) {
-      if (err) {
-        console.log("Error", err);
-        res.end();
-      }
-      else {
-        // using SendGrid's v3 Node.js Library
-        // https://github.com/sendgrid/sendgrid-nodejs
-        const msg = {
-          to: user.local.email,
-          from: 'info@bynstorage.com',
-          subject: 'Thanks for Booking With Byn!',
-          text: 'We are confirming your booking with your host, and will follow up with final confirmation details shortly. Have a great day!',
-         // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-        };
-        sgMail.send(msg);
-      }
-    })
-    .then(function() {
-      if (!host) res.redirect('/bookings');
-      User.findById(host, function(err, user) {
-        if (err) {
-          console.log("Error", err);
-          res.end();
-        }
-        else {
-          // using SendGrid's v3 Node.js Library
-          // https://github.com/sendgrid/sendgrid-nodejs
-          const msg = {
-            to: user.local.email,
-            from: 'info@bynstorage.com',
-            subject: 'Your Byn Has Been Booked!',
-            text: 'Good news! One of your byns has a new booking. Log in to your profile to view the details and confirm. Have a great day!',
-           // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-          };
-          sgMail.send(msg);
-          res.redirect('/bookings');
-        }
-      })
-    })
     //res.sendFile(path.join(__dirname, 'public/bookings.html'))
   });
 
@@ -448,7 +458,7 @@ module.exports = function(app, passport) {
     var id = req.params.id;
     Byn.findByIdAndRemove(id)
     .then(function(byn){
-      index.deleteByQuery('bynref', {filters: `bynref: ${id}`});
+      index.deleteByQuery('', {filters: `bynref: ${id}`});
     })
     .catch(function(err) {
       if (err) {

@@ -254,7 +254,7 @@
                   <input class="form-control" type="text" name="deliveryTime" placeholder="2:00 - 4:00 PM" />
                   <br/>
                   <label for="deliveryNotes">Special Notes to Host:</label> 
-                  <textarea class="form-control" id="deliveryNotes" rows="3"></textarea>
+                  <textarea class="form-control" id="deliveryNotes" name="deliveryNotes" rows="3"></textarea>
                   <input id="byn-mongo-id" type="hidden" name="mongoId" value="" />
                   <input id="byn-alg-id" type="hidden" name="algId" value="" />
                   <input id="start-day" type="hidden" name="start" value="" />
@@ -422,10 +422,10 @@
         var end = new Date(range[1]).getTime();
         var months = (end - start) / (1000 * 60 * 60 * 24 * 30)
         var calculatedTotal = (price * months).toFixed(2);
-        var startDate = new Date(byn.start).toLocaleDateString();
-        var endDate = new Date(byn.end).toLocaleDateString();
+        var startDate = new Date(start).toLocaleDateString();
+        var endDate = new Date(end).toLocaleDateString();
         $(".modal-body #modal-title").html(`${byn.name}<small><br />${byn.location}</small><br/><h6>${byn.type}: ${byn.size} square feet at $${byn.price}/month</h6><h5 id="calc-total" style="color: #ff5e61">Total : $${calculatedTotal}</h5>`);
-        if (!byn.end) byn.end = 'open';
+        if (!byn.end) endDate = 'open';
         byn.amenities = byn.amenities.join(', ');
         $(".modal-body #modal-desc").html(`<br/><h6 style="display: inline">Description:  </h6>${byn.description}<br/>
           <h6 style="display: inline">Amenities:  </h6>${byn.amenities}<br/>
